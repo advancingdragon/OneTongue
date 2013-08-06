@@ -1,0 +1,94 @@
+ometa OneTongue {
+    // OneTongue strings are lists of characters
+
+    // tree nodes are of the form
+
+    // - atom                      returns atom
+    // - [operationString args...] performs operation
+    // - ["list" listOrString]     constructs list (or string)
+    // - ["var" string]            references a variable
+
+    // the last two are needed to disambiguate operations
+    // from literal lists or strings, much like the
+    // quote or quasiquote operators in Lisp
+
+    // JS implementation details
+
+    // OneTongue lists = JS lists
+    // OneTongue characters are represented as JS strings of length 1
+    // for convenience, JS strings of length 2 or greater are
+    // treated as if they were OneTongue strings (lists of characters)
+
+    name = spaces letter:c letterOrDigit*:cs -> (c + cs.join("")),
+
+    character = "#" char:c ?(c.charCodeAt(0) > 32) -> c,
+
+    number = spaces digit+:cs -> (parseInt(cs.join(""))),
+
+    doubleQuoteString = "\"" char*:cs "\"" -> (cs.join("")),
+
+    singleQuoteString = "'" char*:cs "'" -> (cs.join("")),
+
+    oper :p = ?(p === 0) ( "||" -> "or" )
+            | ?(p === 1) ( "&&" -> "and" )
+            | ?(p === 2) ( "="  -> "eq"
+                         | "<>" -> "ne"
+                         | "<=" -> "le"
+                         | ">=" -> "ge"
+                         | "<"  -> "lt"
+                         | ">"  -> "gt" )
+            | ?(p === 3) ( "."  -> "concat" )
+            | ?(p === 4) ( "+"  -> "add"
+                         | "-"  -> "sub" )
+            | ?(p === 5) ( "*"  -> "mul"
+                         | "/"  -> "div"
+                         | "%"  -> "mod" ),
+
+    call = name:n "[" action(0)*:xs "]" -> (["call", n].concat(xs)),
+
+    primitive = call:x                -> x
+              | name:n                -> ["var", n]
+              | character:x           -> x
+              | number:x              -> x
+              | doubleQuoteString:xs  -> ["list", xs]
+              | "{" action(0)*:xs "}" -> ["list", xs]
+              | "(" action(0):x ")"   -> x,
+
+    action :p = ?(p === 6) primitive
+              | ?(p < 6)
+                action(p+1):x
+                ( oper(p):op action(p+1):y -> (x = [op, x, y]) )* -> x,
+
+    kleene = "*" -> "star"
+           | "+" -> "plus"
+           | "?" -> "question",
+
+    expr5 = call:x               -> x
+          | name:n               -> ["call", n]
+          | character:x          -> ["match", x]
+          | number:x             -> ["match", x]
+          | "{" expr:x "}"       -> ["enterList", x]
+          | doubleQuoteString:xs -> ["matchList", xs]
+          | singleQuoteString:xs -> ["enterList", ["matchList", xs]]
+          | "~" expr5:x          -> ["not", x]
+          | "^" action(0):x      -> x
+          | "(" expr:x ")"       -> x,
+
+    expr4 = expr5:x kleene:k -> [k, x]
+          | expr5,
+
+    expr3 = expr4:x ":" name:n -> ["set", n, x]
+          | expr4,
+
+    expr2 = expr3:x ( "," expr3 )+:xs -> (["sideSeq", x].concat(xs))
+          | expr3,
+
+    expr1 = expr2:x expr2+:xs -> (["seq", x].concat(xs))
+          | expr2,
+
+    expr = expr1:x ( "|" expr1 )+:xs -> (["alt", x].concat(xs))
+         | expr1,
+
+    statement = name:n name*:args "=" expr:x ";"
+                -> ["stat", [n].concat(args), x]
+}

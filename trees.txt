@@ -1,0 +1,21 @@
+Expression Tree Node Types
+
+char
+int
+['list' [expr*]]
+['var' [char*]]
+['call' [char*] expr*]
+[op expr expr]
+
+['match' char]
+['match' int]
+['enterList' expr]
+['matchList' [char*]]
+['not' expr]
+
+['set' [char*] expr]
+[kleene expr]
+
+['sideSeq' expr+]
+['seq' expr+]
+['alt' expr+]

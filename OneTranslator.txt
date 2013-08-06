@@ -1,0 +1,160 @@
+ometa OneTranslator {
+    oper = 'mul' | 'div' | 'mod'
+         | 'add' | 'sub'
+         | 'concat'
+         | 'eq' | 'ne' | 'lt' | 'gt' | 'le' | 'ge'
+         | 'and'
+         | 'or',
+
+    expr :dest = char:x
+                 emitChar(x):c
+                 -> (dest + " = oneNewChar(" + c + ");\n")
+
+               | number:x
+                 -> (dest + " = oneNewInt(" + x.toString() + ");\n")
+
+               | [ 'list' [ genVar:v expr(v)*:xs ] ]
+                 ( -> (xs.concat([""])) ):xs
+                 -> (dest + " = oneNewList();\n" +
+                     xs.join("oneAppend(" + dest + ", " + v + ");\n"))
+
+               | [ 'var' string:n ]
+                 -> (dest + " = " + n + ";\n")
+
+               | [ 'call' string:n
+                   ( -> "" ):xs
+                   ( -> "" ):args
+                   (
+                     genVar:v expr(v):x
+                     ( -> x ):xs
+                     ( -> v ):args
+                     (
+                       genVar:v expr(v):x
+                       ( -> (xs + x) ):xs
+                       ( -> (args + ", " + v) ):args
+                     )*
+                   )?
+                 ]
+                 -> (xs +
+                     dest + " = " + n + "(" + args + ");\n")
+
+               | [ oper:op
+                   genVar:v expr(v):x
+                   genVar:w expr(w):y
+                 ]
+                 -> (x + y +
+                     dest + " = " + op + "(" + v + ", " + w + ");\n")
+
+               | [ 'match' char:x ]
+                 emitChar(x):c
+                 -> (dest + " = oneMatchChar(" + c + ");\n")
+
+               | [ 'match' number:x ]
+                 -> (dest + " = oneMatchInt(" + x.toString() + ");\n")
+
+               | [ 'enterList' expr(dest):x ]
+                 -> ("oneEnterList();\n" +
+                     x +
+                     "oneLeaveList();\n")
+
+               | [ 'matchList' [ char*:xs ] ]
+                 emitString(xs.join("")):s
+                 -> (dest + " = oneMatchString(" + s + ");\n")
+
+               | [ 'not' genVar:v expr(v):x ]
+                 -> (x +
+                     dest + " = !" + v + ";\n")
+
+               | [ 'set' [ char*:xs ]
+                   ( -> (xs.join("")) ):v
+                   expr(v):x ]
+                 -> (x +
+                     dest + " = " + v + ";\n")
+
+               | [ 'star' genVar:v expr(v):x ]
+                 -> (dest + " = oneNewList();\n" +
+                     "do {\n" +
+                     x +
+                     "if (" + v + " == NIL) { break; }\n" +
+                     "oneAppend(" + dest + ", " + v + ");\n" +
+                     "} while (0);\n")
+
+               | [ 'plus' genVar:v expr(v):x ]
+                 -> (x +
+                     "if (" + v + " == NIL) {\n" +
+                     dest + " = NIL;\n" +
+                     "} else {\n" +
+                     dest + " = oneNewList();\n" +
+                     "oneAppend(" + dest + ", " + v + ");\n" +
+                     "do {\n" +
+                     x +
+                     "if (" + v + " == NIL) { break; }\n" +
+                     "oneAppend(" + dest + ", " + v + ");\n" +
+                     "} while (0);\n" +
+                     "}\n")
+
+               | [ 'opt' genVar:v expr(v):x ]
+                 -> (dest + " = oneNewList();\n" +
+                     x +
+                     "if (" + v + " != NIL) {\n" +
+                     "oneAppend(" + dest + ", " + v + ");\n" +
+                     "}\n")
+
+               | [ 'sideSeq' expr(dest)*:xs ]
+                 -> (xs.join(""))
+
+               | [ 'seq' expr(dest)*:xs ]
+                 -> ("do {\n" +
+                     xs.join("if (" + dest + " == NIL) { break; }\n") +
+                     "} while (0);\n")
+
+               // TODO add backtracking to alternation
+
+               | [ 'alt' expr(dest)*:xs ]
+                 -> ("do {\n" +
+                     xs.join("if (" + dest + " != NIL) { break; }\n") +
+                     "} while (0);\n"),
+
+    doIt = expr("vResult")
+}
+
+OneTranslator.counter = 0;
+
+OneTranslator.genVar = function() {
+    var r = "v" + this.counter.toString();
+    this.counter = this.counter + 1;
+    return r;
+};
+
+OneTranslator.emitChar = function(c) {
+    if (c === "'") {
+        return "'\\''";
+    } else if (c === "\n") {
+        return "'\\n'";
+    } else if (c === "\r") {
+        return "'\\n'";
+    } else if (c === "\t") {
+        return "'\\t'";
+    } else {
+        return "'" + c + "'";
+    }
+};
+
+OneTranslator.emitString = function(s) {
+    var result = "\"";
+    for (var i = 0; i < s.length; i++) {
+        if (s[i] === "\"") {
+            result = result + "\\\"";
+        } else if (s[i] === "\n") {
+            result = result + "\\n";
+        } else if (s[i] === "\r") {
+            result = result + "\\r";
+        } else if (s[i] === "\t") {
+            result = result + "\\t";
+        } else {
+            result = result + s[i];
+        }
+    }
+    result = result + "\"";
+    return result;
+};
