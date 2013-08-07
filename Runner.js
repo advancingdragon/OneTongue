@@ -1,3 +1,38 @@
+unescape = function(s) {
+    var result = "";
+    for (var i = 0; i < s.length; i++) {
+        if (s[i] === "\\") {
+            i++;
+            switch (s[i]) {
+            case "\\":
+                result += "\\";
+                break;
+            case "\"":
+                result += "\"";
+                break;
+            case "'":
+                result += "'";
+                break;
+            case "n":
+                result += "\n";
+                break;
+            case "r":
+                result += "\r";
+                break;
+            case "t":
+                result += "\t";
+                break;
+            default:
+                throw fail;
+                break;
+            }
+        } else {
+            result += s[i];
+        }
+    }
+    return result;
+};
+
 fs = require('fs');
 
 load = function(file) {
@@ -39,11 +74,5 @@ var tree = OneTongue.matchAll("foo | bar baz \"quux\" 'wang' {dongs 3 4}", "expr
 var code = OneTranslator.match(tree, "doIt");
 
 console.log(JSON.stringify(tree));
-
 console.log();
-
-// strange, does not support newlines
-code = code.split("\\n");
-for (var i = 0; i < code.length; i++) {
-    console.log(code[i]);
-}
+console.log(code);

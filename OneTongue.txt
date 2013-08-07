@@ -28,7 +28,7 @@ ometa OneTongue {
     number = spaces digit+:cs
              -> (parseInt(cs.join(""))),
 
-    doubleQuoteString = token('"') (~token('"') char)*:cs token('"')
+    doubleQuoteString = "\"" (~"\"" char)*:cs "\""
                         -> (cs.join("")),
 
     singleQuoteString = "'" (~"'" char)*:cs "'"
