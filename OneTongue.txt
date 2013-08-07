@@ -19,15 +19,20 @@ ometa OneTongue {
     // for convenience, JS strings of length 2 or greater are
     // treated as if they were OneTongue strings (lists of characters)
 
-    name = spaces letter:c letterOrDigit*:cs -> (c + cs.join("")),
+    name = spaces letter:c letterOrDigit*:cs
+           -> (c + cs.join("")),
 
-    character = "#" char:c ?(c.charCodeAt(0) > 32) -> c,
+    character = "#" char:c ?(c.charCodeAt(0) > 32)
+                -> c,
 
-    number = spaces digit+:cs -> (parseInt(cs.join(""))),
+    number = spaces digit+:cs
+             -> (parseInt(cs.join(""))),
 
-    doubleQuoteString = "\"" char*:cs "\"" -> (cs.join("")),
+    doubleQuoteString = token('"') (~token('"') char)*:cs token('"')
+                        -> (cs.join("")),
 
-    singleQuoteString = "'" char*:cs "'" -> (cs.join("")),
+    singleQuoteString = "'" (~"'" char)*:cs "'"
+                        -> (cs.join("")),
 
     oper :p = ?(p === 0) ( "||" -> "or" )
             | ?(p === 1) ( "&&" -> "and" )

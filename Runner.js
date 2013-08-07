@@ -35,7 +35,7 @@ loadOMeta = function(s) {
 loadOMeta("OneTongue.txt");
 loadOMeta("OneTranslator.txt");
 
-var tree = OneTongue.matchAll("foo | bar baz {dongs 3 4}", "expr");
+var tree = OneTongue.matchAll("foo | bar baz \"quux\" 'wang' {dongs 3 4}", "expr");
 var code = OneTranslator.match(tree, "doIt");
 
 console.log(JSON.stringify(tree));
