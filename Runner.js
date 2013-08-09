@@ -1,36 +1,37 @@
+// this is the TinLizzie version of unescape, which
+// is incompatible with the standard unescape
+
 unescape = function(s) {
-    var result = "";
-    for (var i = 0; i < s.length; i++) {
-        if (s[i] === "\\") {
-            i++;
-            switch (s[i]) {
-            case "\\":
-                result += "\\";
-                break;
-            case "\"":
-                result += "\"";
-                break;
-            case "'":
-                result += "'";
-                break;
-            case "n":
-                result += "\n";
-                break;
-            case "r":
-                result += "\r";
-                break;
-            case "t":
-                result += "\t";
-                break;
-            default:
-                throw fail;
-                break;
-            }
-        } else {
-            result += s[i];
+    if (s.charAt(0) === "\\") {
+        switch (s.charAt(1)) {
+        case '"':
+            return '"';
+        case "'":
+            return "'";
+        case "\\":
+            return "\\";
+        case "b":
+            return "\b";
+        case "f":
+            return "\f";
+        case "n":
+            return "\n";
+        case "r":
+            return "\r";
+        case "t":
+            return "\t";
+        case "v":
+            return "\v";
+        case "x":
+            return String.fromCharCode(parseInt(s.substring(2, 4), 16));
+        case "u":
+            return String.fromCharCode(parseInt(s.substring(2, 4), 16));
+        default:
+            return s.charAt(1);
         }
+    } else {
+        return s;
     }
-    return result;
 };
 
 fs = require('fs');
