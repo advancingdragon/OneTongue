@@ -5,9 +5,12 @@ eval(fs.readFileSync(__dirname + "/OMetaLoader.js", 'utf8'));
 loadOMeta("OneTongue.txt");
 loadOMeta("OneTranslator.txt");
 
-var tree = OneTongue.matchAll("foo | bar baz \"quux\" 'wang' {dongs 3 4}", "expr");
-var code = OneTranslator.match(tree, "doIt");
+var source = fs.readFileSync(__dirname + "/tests/Calculator.txt", 'utf8')
+var tree = OneTongue.matchAll(source, "program");
+// var code = OneTranslator.match(tree, "doIt");
 
-console.log(JSON.stringify(tree));
+console.log(tree);
 console.log();
-console.log(code);
+console.log(JSON.stringify(tree));
+// console.log();
+// console.log(code);

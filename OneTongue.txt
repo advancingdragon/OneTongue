@@ -95,5 +95,7 @@ ometa OneTongue {
          | expr1,
 
     statement = name:n name*:args "=" expr:x ";"
-                -> ["stat", [n].concat(args), x]
+                -> ["stat", [n].concat(args), x],
+
+    program = statement*
 }

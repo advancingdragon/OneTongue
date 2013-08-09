@@ -1,4 +1,4 @@
-digit = char:x !x >= $0 and x <= $9 !x
+digit = char:x !x >= $0 && x <= $9 !x;
 
 number = digit+:cs !toInt[cs];
 
@@ -19,7 +19,7 @@ mulOp = #"*"   !"mul"
 
 comp = expr:x ( relOp:op expr:y !{op x y}:x )* !x;
 
-expr = #"-" term:x !{"neg" x}:x ( addOp:op term:y !{op x y}:x )* !x;
+expr = #"-" term:x !{"neg" x}:x ( addOp:op term:y !{op x y}:x )* !x
      |      term:x              ( addOp:op term:y !{op x y}:x )* !x;
 
 term = factor:x ( mulOp:op factor:y !{op x y}:x )* !x;
