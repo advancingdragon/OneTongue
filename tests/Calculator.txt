@@ -1,0 +1,41 @@
+digit = char:x !x >= $0 and x <= $9 !x
+
+number = digit+:cs !toInt[cs];
+
+relOp = #"==" !"eq"
+      | #"<>" !"ne"
+      | #"<=" !"le"
+      | #">=" !"ge"
+      | #"<"  !"lt"
+      | #">"  !"gt";
+
+addOp = #"+"  !"add"
+      | #"-"  !"sub"
+      | #"or" !"or";
+
+mulOp = #"*"   !"mul"
+      | #"/"   !"div"
+      | #"and" !"and";
+
+comp = expr:x ( relOp:op expr:y !{op x y}:x )* !x;
+
+expr = #"-" term:x !{"neg" x}:x ( addOp:op term:y !{op x y}:x )* !x;
+     |      term:x              ( addOp:op term:y !{op x y}:x )* !x;
+
+term = factor:x ( mulOp:op factor:y !{op x y}:x )* !x;
+
+factor = number
+       | #"(" comp:x #")" !x;
+
+listExpr = number
+         | { 'neg' listExpr:x }            !neg[x]
+         | { 'mul' listExpr:x listExpr:y } !x * y
+         | { 'div' listExpr:x listExpr:y } !x / y
+         | { 'add' listExpr:x listExpr:y } !x + y
+         | { 'sub' listExpr:x listExpr:y } !x - y
+         | { 'eq'  listExpr:x listExpr:y } !x == y
+         | { 'ne'  listExpr:x listExpr:y } !x <> y
+         | { 'le'  listExpr:x listExpr:y } !x <= y
+         | { 'ge'  listExpr:x listExpr:y } !x >= y
+         | { 'lt'  listExpr:x listExpr:y } !x < y
+         | { 'gt'  listExpr:x listExpr:y } !x > y;

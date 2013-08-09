@@ -22,21 +22,21 @@ ometa OneTongue {
     name = spaces letter:c letterOrDigit*:cs
            -> (c + cs.join("")),
 
-    character = "#" char:c ?(c.charCodeAt(0) > 32)
+    character = "$" char:c ?(c.charCodeAt(0) > 32)
                 -> c,
 
     number = spaces digit+:cs
              -> (parseInt(cs.join(""))),
 
-    doubleQuoteString = "\"" (~"\"" char)*:cs "\""
-                        -> (cs.join("")),
+    doubleQuote = "\"" (~"\"" char)*:cs "\""
+                  -> (cs.join("")),
 
-    singleQuoteString = "'" (~"'" char)*:cs "'"
-                        -> (cs.join("")),
+    singleQuote = "'" (~"'" char)*:cs "'"
+                  -> (cs.join("")),
 
     oper :p = ?(p === 0) ( "||" -> "or" )
             | ?(p === 1) ( "&&" -> "and" )
-            | ?(p === 2) ( "="  -> "eq"
+            | ?(p === 2) ( "==" -> "eq"
                          | "<>" -> "ne"
                          | "<=" -> "le"
                          | ">=" -> "ge"
@@ -55,7 +55,7 @@ ometa OneTongue {
               | name:n                -> ["var", n]
               | character:x           -> x
               | number:x              -> x
-              | doubleQuoteString:xs  -> ["list", xs]
+              | doubleQuote:xs        -> ["list", xs]
               | "{" action(0)*:xs "}" -> ["list", xs]
               | "(" action(0):x ")"   -> x,
 
@@ -68,16 +68,16 @@ ometa OneTongue {
            | "+" -> "plus"
            | "?" -> "question",
 
-    expr5 = call:x               -> x
-          | name:n               -> ["call", n]
-          | character:x          -> ["match", x]
-          | number:x             -> ["match", x]
-          | "{" expr:x "}"       -> ["enterList", x]
-          | doubleQuoteString:xs -> ["matchList", xs]
-          | singleQuoteString:xs -> ["enterList", ["matchList", xs]]
-          | "~" expr5:x          -> ["not", x]
-          | "^" action(0):x      -> x
-          | "(" expr:x ")"       -> x,
+    expr5 = call:x              -> x
+          | name:n              -> ["call", n]
+          | number:x            -> ["match", x]
+          | doubleQuote:xs      -> ["matchList", xs]
+          | "#" doubleQuote:xs  -> ["call", "token", ["list", xs]]
+          | "{" expr:x "}"      -> ["enterList", x]
+          | singleQuote:xs      -> ["enterList", ["matchList", xs]]
+          | "~" expr5:x         -> ["not", x]
+          | "!" action(0):x     -> x
+          | "(" expr:x ")"      -> x,
 
     expr4 = expr5:x kleene:k -> [k, x]
           | expr5,

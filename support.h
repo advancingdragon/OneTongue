@@ -30,7 +30,6 @@ struct oneValue *oneNewInt(int i);
 struct oneValue *oneNewList(void);
 void oneAppend(struct oneValue *list, struct oneValue *item);
 
-struct oneValue *oneMatchChar(char c);
 struct oneValue *oneMatchInt(int i);
 struct oneValue *oneMatchString(char *s);
 void oneEnterList(void);

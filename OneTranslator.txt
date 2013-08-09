@@ -45,10 +45,6 @@ ometa OneTranslator {
                  -> (x + y +
                      dest + " = " + op + "(" + v + ", " + w + ");\n")
 
-               | [ 'match' char:x ]
-                 emitChar(x):c
-                 -> (dest + " = oneMatchChar(" + c + ");\n")
-
                | [ 'match' number:x ]
                  -> (dest + " = oneMatchInt(" + x.toString() + ");\n")
 
