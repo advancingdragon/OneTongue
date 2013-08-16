@@ -2,15 +2,15 @@
 fs = require('fs');
 eval(fs.readFileSync(__dirname + "/OMetaLoader.js", 'utf8'));
 
+util = require('util');
+
 loadOMeta("OneTongue.txt");
 loadOMeta("OneTranslator.txt");
 
-var source = fs.readFileSync(__dirname + "/tests/Calculator.txt", 'utf8')
+var source = fs.readFileSync(__dirname + "/tests/Smalltalk.txt", 'utf8')
 var tree = OneTongue.matchAll(source, "program");
-// var code = OneTranslator.match(tree, "doIt");
+var code = OneTranslator.match(tree, "program");
 
-console.log(tree);
+console.log(util.inspect(tree, { depth: null }));
 console.log();
-console.log(JSON.stringify(tree));
-// console.log();
-// console.log(code);
+console.log(code);

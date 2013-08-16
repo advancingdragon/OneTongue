@@ -1,0 +1,978 @@
+[ [ 'stat',
+    [ 'digit' ],
+    [ 'seq',
+      [ 'set', 'x', [ 'call', 'char' ] ],
+      [ 'and',
+        [ 'ge', [ 'var', 'x' ], '0' ],
+        [ 'le', [ 'var', 'x' ], '9' ] ],
+      [ 'var', 'x' ] ] ],
+  [ 'stat',
+    [ 'number' ],
+    [ 'seq',
+      [ 'set', 'cs', [ 'plus', [ 'call', 'digit' ] ] ],
+      [ 'call', 'toInt', [ 'var', 'cs' ] ] ] ],
+  [ 'stat',
+    [ 'relOp' ],
+    [ 'alt',
+      [ 'seq',
+        [ 'call', 'token', [ 'list', '==' ] ],
+        [ 'list', 'eq' ] ],
+      [ 'seq',
+        [ 'call', 'token', [ 'list', '<>' ] ],
+        [ 'list', 'ne' ] ],
+      [ 'seq',
+        [ 'call', 'token', [ 'list', '<=' ] ],
+        [ 'list', 'le' ] ],
+      [ 'seq',
+        [ 'call', 'token', [ 'list', '>=' ] ],
+        [ 'list', 'ge' ] ],
+      [ 'seq', [ 'call', 'token', [ 'list', '<' ] ], [ 'list', 'lt' ] ],
+      [ 'seq', [ 'call', 'token', [ 'list', '>' ] ], [ 'list', 'gt' ] ] ] ],
+  [ 'stat',
+    [ 'addOp' ],
+    [ 'alt',
+      [ 'seq',
+        [ 'call', 'token', [ 'list', '+' ] ],
+        [ 'list', 'add' ] ],
+      [ 'seq',
+        [ 'call', 'token', [ 'list', '-' ] ],
+        [ 'list', 'sub' ] ],
+      [ 'seq',
+        [ 'call', 'token', [ 'list', 'or' ] ],
+        [ 'list', 'or' ] ] ] ],
+  [ 'stat',
+    [ 'mulOp' ],
+    [ 'alt',
+      [ 'seq',
+        [ 'call', 'token', [ 'list', '*' ] ],
+        [ 'list', 'mul' ] ],
+      [ 'seq',
+        [ 'call', 'token', [ 'list', '/' ] ],
+        [ 'list', 'div' ] ],
+      [ 'seq',
+        [ 'call', 'token', [ 'list', 'and' ] ],
+        [ 'list', 'and' ] ] ] ],
+  [ 'stat',
+    [ 'comp' ],
+    [ 'seq',
+      [ 'set', 'x', [ 'call', 'expr' ] ],
+      [ 'star',
+        [ 'seq',
+          [ 'set', 'op', [ 'call', 'relOp' ] ],
+          [ 'set', 'y', [ 'call', 'expr' ] ],
+          [ 'set',
+            'x',
+            [ 'list', [ [ 'var', 'op' ], [ 'var', 'x' ], [ 'var', 'y' ] ] ] ] ] ],
+      [ 'var', 'x' ] ] ],
+  [ 'stat',
+    [ 'expr' ],
+    [ 'alt',
+      [ 'seq',
+        [ 'call', 'token', [ 'list', '-' ] ],
+        [ 'set', 'x', [ 'call', 'term' ] ],
+        [ 'set', 'x', [ 'list', [ [ 'list', 'neg' ], [ 'var', 'x' ] ] ] ],
+        [ 'star',
+          [ 'seq',
+            [ 'set', 'op', [ 'call', 'addOp' ] ],
+            [ 'set', 'y', [ 'call', 'term' ] ],
+            [ 'set',
+              'x',
+              [ 'list', [ [ 'var', 'op' ], [ 'var', 'x' ], [ 'var', 'y' ] ] ] ] ] ],
+        [ 'var', 'x' ] ],
+      [ 'seq',
+        [ 'set', 'x', [ 'call', 'term' ] ],
+        [ 'star',
+          [ 'seq',
+            [ 'set', 'op', [ 'call', 'addOp' ] ],
+            [ 'set', 'y', [ 'call', 'term' ] ],
+            [ 'set',
+              'x',
+              [ 'list', [ [ 'var', 'op' ], [ 'var', 'x' ], [ 'var', 'y' ] ] ] ] ] ],
+        [ 'var', 'x' ] ] ] ],
+  [ 'stat',
+    [ 'term' ],
+    [ 'seq',
+      [ 'set', 'x', [ 'call', 'factor' ] ],
+      [ 'star',
+        [ 'seq',
+          [ 'set', 'op', [ 'call', 'mulOp' ] ],
+          [ 'set', 'y', [ 'call', 'factor' ] ],
+          [ 'set',
+            'x',
+            [ 'list', [ [ 'var', 'op' ], [ 'var', 'x' ], [ 'var', 'y' ] ] ] ] ] ],
+      [ 'var', 'x' ] ] ],
+  [ 'stat',
+    [ 'factor' ],
+    [ 'alt',
+      [ 'call', 'number' ],
+      [ 'seq',
+        [ 'call', 'token', [ 'list', '(' ] ],
+        [ 'set', 'x', [ 'call', 'comp' ] ],
+        [ 'call', 'token', [ 'list', ')' ] ],
+        [ 'var', 'x' ] ] ] ],
+  [ 'stat',
+    [ 'listExpr' ],
+    [ 'alt',
+      [ 'call', 'number' ],
+      [ 'seq',
+        [ 'enterList',
+          [ 'seq',
+            [ 'enterList', [ 'matchList', 'neg' ] ],
+            [ 'set', 'x', [ 'call', 'listExpr' ] ] ] ],
+        [ 'call', 'neg', [ 'var', 'x' ] ] ],
+      [ 'seq',
+        [ 'enterList',
+          [ 'seq',
+            [ 'enterList', [ 'matchList', 'mul' ] ],
+            [ 'set', 'x', [ 'call', 'listExpr' ] ],
+            [ 'set', 'y', [ 'call', 'listExpr' ] ] ] ],
+        [ 'mul', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
+      [ 'seq',
+        [ 'enterList',
+          [ 'seq',
+            [ 'enterList', [ 'matchList', 'div' ] ],
+            [ 'set', 'x', [ 'call', 'listExpr' ] ],
+            [ 'set', 'y', [ 'call', 'listExpr' ] ] ] ],
+        [ 'div', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
+      [ 'seq',
+        [ 'enterList',
+          [ 'seq',
+            [ 'enterList', [ 'matchList', 'add' ] ],
+            [ 'set', 'x', [ 'call', 'listExpr' ] ],
+            [ 'set', 'y', [ 'call', 'listExpr' ] ] ] ],
+        [ 'add', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
+      [ 'seq',
+        [ 'enterList',
+          [ 'seq',
+            [ 'enterList', [ 'matchList', 'sub' ] ],
+            [ 'set', 'x', [ 'call', 'listExpr' ] ],
+            [ 'set', 'y', [ 'call', 'listExpr' ] ] ] ],
+        [ 'sub', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
+      [ 'seq',
+        [ 'enterList',
+          [ 'seq',
+            [ 'enterList', [ 'matchList', 'eq' ] ],
+            [ 'set', 'x', [ 'call', 'listExpr' ] ],
+            [ 'set', 'y', [ 'call', 'listExpr' ] ] ] ],
+        [ 'eq', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
+      [ 'seq',
+        [ 'enterList',
+          [ 'seq',
+            [ 'enterList', [ 'matchList', 'ne' ] ],
+            [ 'set', 'x', [ 'call', 'listExpr' ] ],
+            [ 'set', 'y', [ 'call', 'listExpr' ] ] ] ],
+        [ 'ne', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
+      [ 'seq',
+        [ 'enterList',
+          [ 'seq',
+            [ 'enterList', [ 'matchList', 'le' ] ],
+            [ 'set', 'x', [ 'call', 'listExpr' ] ],
+            [ 'set', 'y', [ 'call', 'listExpr' ] ] ] ],
+        [ 'le', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
+      [ 'seq',
+        [ 'enterList',
+          [ 'seq',
+            [ 'enterList', [ 'matchList', 'ge' ] ],
+            [ 'set', 'x', [ 'call', 'listExpr' ] ],
+            [ 'set', 'y', [ 'call', 'listExpr' ] ] ] ],
+        [ 'ge', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
+      [ 'seq',
+        [ 'enterList',
+          [ 'seq',
+            [ 'enterList', [ 'matchList', 'lt' ] ],
+            [ 'set', 'x', [ 'call', 'listExpr' ] ],
+            [ 'set', 'y', [ 'call', 'listExpr' ] ] ] ],
+        [ 'lt', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
+      [ 'seq',
+        [ 'enterList',
+          [ 'seq',
+            [ 'enterList', [ 'matchList', 'gt' ] ],
+            [ 'set', 'x', [ 'call', 'listExpr' ] ],
+            [ 'set', 'y', [ 'call', 'listExpr' ] ] ] ],
+        [ 'gt', [ 'var', 'x' ], [ 'var', 'y' ] ] ] ] ] ]
+
+struct oneValue *digit()
+{
+struct oneValue *v0;
+struct oneValue *v1;
+struct oneValue *v2;
+struct oneValue *v3;
+struct oneValue *v4;
+struct oneValue *v5;
+struct oneValue *v6;
+do {
+x = char();
+vRes = x;
+if (vRes == NIL) { break; }
+v2 = x;
+v3 = oneNewChar('0');
+v1 = ge(v2, v3);
+v5 = x;
+v6 = oneNewChar('9');
+v4 = le(v5, v6);
+vRes = and(v1, v4);
+if (vRes == NIL) { break; }
+vRes = x;
+} while (0);
+}
+
+struct oneValue *number()
+{
+struct oneValue *v0;
+struct oneValue *v1;
+struct oneValue *v2;
+struct oneValue *v3;
+do {
+v0 = digit();
+if (v0 == NIL) {
+cs = NIL;
+} else {
+cs = oneNewList();
+oneAppend(cs, v0);
+do {
+v0 = digit();
+if (v0 == NIL) { break; }
+oneAppend(cs, v0);
+} while (0);
+}
+vRes = cs;
+if (vRes == NIL) { break; }
+v2 = cs;
+vRes = toInt(v2);
+} while (0);
+}
+
+struct oneValue *relOp()
+{
+struct oneValue *v0;
+struct oneValue *v1;
+struct oneValue *v2;
+struct oneValue *v3;
+struct oneValue *v4;
+struct oneValue *v5;
+struct oneValue *v6;
+struct oneValue *v7;
+struct oneValue *v8;
+struct oneValue *v9;
+struct oneValue *v10;
+struct oneValue *v11;
+struct oneValue *v12;
+struct oneValue *v13;
+struct oneValue *v14;
+struct oneValue *v15;
+struct oneValue *v16;
+struct oneValue *v17;
+struct oneValue *v18;
+struct oneValue *v19;
+struct oneValue *v20;
+struct oneValue *v21;
+struct oneValue *v22;
+struct oneValue *v23;
+do {
+do {
+v0 = oneNewList();
+v1 = oneNewChar('=');
+oneAppend(v0, v1);
+v1 = oneNewChar('=');
+oneAppend(v0, v1);
+vRes = token(v0);
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+v3 = oneNewChar('e');
+oneAppend(vRes, v3);
+v3 = oneNewChar('q');
+oneAppend(vRes, v3);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+v4 = oneNewList();
+v5 = oneNewChar('<');
+oneAppend(v4, v5);
+v5 = oneNewChar('>');
+oneAppend(v4, v5);
+vRes = token(v4);
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+v7 = oneNewChar('n');
+oneAppend(vRes, v7);
+v7 = oneNewChar('e');
+oneAppend(vRes, v7);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+v8 = oneNewList();
+v9 = oneNewChar('<');
+oneAppend(v8, v9);
+v9 = oneNewChar('=');
+oneAppend(v8, v9);
+vRes = token(v8);
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+v11 = oneNewChar('l');
+oneAppend(vRes, v11);
+v11 = oneNewChar('e');
+oneAppend(vRes, v11);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+v12 = oneNewList();
+v13 = oneNewChar('>');
+oneAppend(v12, v13);
+v13 = oneNewChar('=');
+oneAppend(v12, v13);
+vRes = token(v12);
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+v15 = oneNewChar('g');
+oneAppend(vRes, v15);
+v15 = oneNewChar('e');
+oneAppend(vRes, v15);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+v16 = oneNewList();
+v17 = oneNewChar('<');
+oneAppend(v16, v17);
+vRes = token(v16);
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+v19 = oneNewChar('l');
+oneAppend(vRes, v19);
+v19 = oneNewChar('t');
+oneAppend(vRes, v19);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+v20 = oneNewList();
+v21 = oneNewChar('>');
+oneAppend(v20, v21);
+vRes = token(v20);
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+v23 = oneNewChar('g');
+oneAppend(vRes, v23);
+v23 = oneNewChar('t');
+oneAppend(vRes, v23);
+} while (0);
+} while (0);
+}
+
+struct oneValue *addOp()
+{
+struct oneValue *v0;
+struct oneValue *v1;
+struct oneValue *v2;
+struct oneValue *v3;
+struct oneValue *v4;
+struct oneValue *v5;
+struct oneValue *v6;
+struct oneValue *v7;
+struct oneValue *v8;
+struct oneValue *v9;
+struct oneValue *v10;
+struct oneValue *v11;
+do {
+do {
+v0 = oneNewList();
+v1 = oneNewChar('+');
+oneAppend(v0, v1);
+vRes = token(v0);
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+v3 = oneNewChar('a');
+oneAppend(vRes, v3);
+v3 = oneNewChar('d');
+oneAppend(vRes, v3);
+v3 = oneNewChar('d');
+oneAppend(vRes, v3);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+v4 = oneNewList();
+v5 = oneNewChar('-');
+oneAppend(v4, v5);
+vRes = token(v4);
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+v7 = oneNewChar('s');
+oneAppend(vRes, v7);
+v7 = oneNewChar('u');
+oneAppend(vRes, v7);
+v7 = oneNewChar('b');
+oneAppend(vRes, v7);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+v8 = oneNewList();
+v9 = oneNewChar('o');
+oneAppend(v8, v9);
+v9 = oneNewChar('r');
+oneAppend(v8, v9);
+vRes = token(v8);
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+v11 = oneNewChar('o');
+oneAppend(vRes, v11);
+v11 = oneNewChar('r');
+oneAppend(vRes, v11);
+} while (0);
+} while (0);
+}
+
+struct oneValue *mulOp()
+{
+struct oneValue *v0;
+struct oneValue *v1;
+struct oneValue *v2;
+struct oneValue *v3;
+struct oneValue *v4;
+struct oneValue *v5;
+struct oneValue *v6;
+struct oneValue *v7;
+struct oneValue *v8;
+struct oneValue *v9;
+struct oneValue *v10;
+struct oneValue *v11;
+do {
+do {
+v0 = oneNewList();
+v1 = oneNewChar('*');
+oneAppend(v0, v1);
+vRes = token(v0);
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+v3 = oneNewChar('m');
+oneAppend(vRes, v3);
+v3 = oneNewChar('u');
+oneAppend(vRes, v3);
+v3 = oneNewChar('l');
+oneAppend(vRes, v3);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+v4 = oneNewList();
+v5 = oneNewChar('/');
+oneAppend(v4, v5);
+vRes = token(v4);
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+v7 = oneNewChar('d');
+oneAppend(vRes, v7);
+v7 = oneNewChar('i');
+oneAppend(vRes, v7);
+v7 = oneNewChar('v');
+oneAppend(vRes, v7);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+v8 = oneNewList();
+v9 = oneNewChar('a');
+oneAppend(v8, v9);
+v9 = oneNewChar('n');
+oneAppend(v8, v9);
+v9 = oneNewChar('d');
+oneAppend(v8, v9);
+vRes = token(v8);
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+v11 = oneNewChar('a');
+oneAppend(vRes, v11);
+v11 = oneNewChar('n');
+oneAppend(vRes, v11);
+v11 = oneNewChar('d');
+oneAppend(vRes, v11);
+} while (0);
+} while (0);
+}
+
+struct oneValue *comp()
+{
+struct oneValue *v0;
+struct oneValue *v1;
+struct oneValue *v2;
+struct oneValue *v3;
+struct oneValue *v4;
+do {
+x = expr();
+vRes = x;
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+do {
+do {
+op = relOp();
+v1 = op;
+if (v1 == NIL) { break; }
+y = expr();
+v1 = y;
+if (v1 == NIL) { break; }
+x = oneNewList();
+v4 = op;
+oneAppend(x, v4);
+v4 = x;
+oneAppend(x, v4);
+v4 = y;
+oneAppend(x, v4);
+v1 = x;
+} while (0);
+if (v1 == NIL) { break; }
+oneAppend(vRes, v1);
+} while (0);
+if (vRes == NIL) { break; }
+vRes = x;
+} while (0);
+}
+
+struct oneValue *expr()
+{
+struct oneValue *v0;
+struct oneValue *v1;
+struct oneValue *v2;
+struct oneValue *v3;
+struct oneValue *v4;
+struct oneValue *v5;
+struct oneValue *v6;
+struct oneValue *v7;
+struct oneValue *v8;
+struct oneValue *v9;
+struct oneValue *v10;
+struct oneValue *v11;
+struct oneValue *v12;
+struct oneValue *v13;
+struct oneValue *v14;
+do {
+do {
+v0 = oneNewList();
+v1 = oneNewChar('-');
+oneAppend(v0, v1);
+vRes = token(v0);
+if (vRes == NIL) { break; }
+x = term();
+vRes = x;
+if (vRes == NIL) { break; }
+x = oneNewList();
+v4 = oneNewList();
+v5 = oneNewChar('n');
+oneAppend(v4, v5);
+v5 = oneNewChar('e');
+oneAppend(v4, v5);
+v5 = oneNewChar('g');
+oneAppend(v4, v5);
+oneAppend(x, v4);
+v4 = x;
+oneAppend(x, v4);
+vRes = x;
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+do {
+do {
+op = addOp();
+v6 = op;
+if (v6 == NIL) { break; }
+y = term();
+v6 = y;
+if (v6 == NIL) { break; }
+x = oneNewList();
+v9 = op;
+oneAppend(x, v9);
+v9 = x;
+oneAppend(x, v9);
+v9 = y;
+oneAppend(x, v9);
+v6 = x;
+} while (0);
+if (v6 == NIL) { break; }
+oneAppend(vRes, v6);
+} while (0);
+if (vRes == NIL) { break; }
+vRes = x;
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+x = term();
+vRes = x;
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+do {
+do {
+op = addOp();
+v11 = op;
+if (v11 == NIL) { break; }
+y = term();
+v11 = y;
+if (v11 == NIL) { break; }
+x = oneNewList();
+v14 = op;
+oneAppend(x, v14);
+v14 = x;
+oneAppend(x, v14);
+v14 = y;
+oneAppend(x, v14);
+v11 = x;
+} while (0);
+if (v11 == NIL) { break; }
+oneAppend(vRes, v11);
+} while (0);
+if (vRes == NIL) { break; }
+vRes = x;
+} while (0);
+} while (0);
+}
+
+struct oneValue *term()
+{
+struct oneValue *v0;
+struct oneValue *v1;
+struct oneValue *v2;
+struct oneValue *v3;
+struct oneValue *v4;
+do {
+x = factor();
+vRes = x;
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+do {
+do {
+op = mulOp();
+v1 = op;
+if (v1 == NIL) { break; }
+y = factor();
+v1 = y;
+if (v1 == NIL) { break; }
+x = oneNewList();
+v4 = op;
+oneAppend(x, v4);
+v4 = x;
+oneAppend(x, v4);
+v4 = y;
+oneAppend(x, v4);
+v1 = x;
+} while (0);
+if (v1 == NIL) { break; }
+oneAppend(vRes, v1);
+} while (0);
+if (vRes == NIL) { break; }
+vRes = x;
+} while (0);
+}
+
+struct oneValue *factor()
+{
+struct oneValue *v0;
+struct oneValue *v1;
+struct oneValue *v2;
+struct oneValue *v3;
+struct oneValue *v4;
+struct oneValue *v5;
+struct oneValue *v6;
+struct oneValue *v7;
+do {
+vRes = number();
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+v1 = oneNewList();
+v2 = oneNewChar('(');
+oneAppend(v1, v2);
+vRes = token(v1);
+if (vRes == NIL) { break; }
+x = comp();
+vRes = x;
+if (vRes == NIL) { break; }
+v5 = oneNewList();
+v6 = oneNewChar(')');
+oneAppend(v5, v6);
+vRes = token(v5);
+if (vRes == NIL) { break; }
+vRes = x;
+} while (0);
+} while (0);
+}
+
+struct oneValue *listExpr()
+{
+struct oneValue *v0;
+struct oneValue *v1;
+struct oneValue *v2;
+struct oneValue *v3;
+struct oneValue *v4;
+struct oneValue *v5;
+struct oneValue *v6;
+struct oneValue *v7;
+struct oneValue *v8;
+struct oneValue *v9;
+struct oneValue *v10;
+struct oneValue *v11;
+struct oneValue *v12;
+struct oneValue *v13;
+struct oneValue *v14;
+struct oneValue *v15;
+struct oneValue *v16;
+struct oneValue *v17;
+struct oneValue *v18;
+struct oneValue *v19;
+struct oneValue *v20;
+struct oneValue *v21;
+struct oneValue *v22;
+struct oneValue *v23;
+struct oneValue *v24;
+struct oneValue *v25;
+struct oneValue *v26;
+struct oneValue *v27;
+struct oneValue *v28;
+struct oneValue *v29;
+struct oneValue *v30;
+struct oneValue *v31;
+struct oneValue *v32;
+struct oneValue *v33;
+struct oneValue *v34;
+struct oneValue *v35;
+struct oneValue *v36;
+struct oneValue *v37;
+struct oneValue *v38;
+struct oneValue *v39;
+struct oneValue *v40;
+struct oneValue *v41;
+struct oneValue *v42;
+struct oneValue *v43;
+do {
+vRes = number();
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+oneEnterList();
+do {
+oneEnterList();
+vRes = oneMatchString("neg");
+oneLeaveList();
+if (vRes == NIL) { break; }
+x = listExpr();
+vRes = x;
+} while (0);
+oneLeaveList();
+if (vRes == NIL) { break; }
+v2 = x;
+vRes = neg(v2);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+oneEnterList();
+do {
+oneEnterList();
+vRes = oneMatchString("mul");
+oneLeaveList();
+if (vRes == NIL) { break; }
+x = listExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = listExpr();
+vRes = y;
+} while (0);
+oneLeaveList();
+if (vRes == NIL) { break; }
+v6 = x;
+v7 = y;
+vRes = mul(v6, v7);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+oneEnterList();
+do {
+oneEnterList();
+vRes = oneMatchString("div");
+oneLeaveList();
+if (vRes == NIL) { break; }
+x = listExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = listExpr();
+vRes = y;
+} while (0);
+oneLeaveList();
+if (vRes == NIL) { break; }
+v10 = x;
+v11 = y;
+vRes = div(v10, v11);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+oneEnterList();
+do {
+oneEnterList();
+vRes = oneMatchString("add");
+oneLeaveList();
+if (vRes == NIL) { break; }
+x = listExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = listExpr();
+vRes = y;
+} while (0);
+oneLeaveList();
+if (vRes == NIL) { break; }
+v14 = x;
+v15 = y;
+vRes = add(v14, v15);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+oneEnterList();
+do {
+oneEnterList();
+vRes = oneMatchString("sub");
+oneLeaveList();
+if (vRes == NIL) { break; }
+x = listExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = listExpr();
+vRes = y;
+} while (0);
+oneLeaveList();
+if (vRes == NIL) { break; }
+v18 = x;
+v19 = y;
+vRes = sub(v18, v19);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+oneEnterList();
+do {
+oneEnterList();
+vRes = oneMatchString("eq");
+oneLeaveList();
+if (vRes == NIL) { break; }
+x = listExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = listExpr();
+vRes = y;
+} while (0);
+oneLeaveList();
+if (vRes == NIL) { break; }
+v22 = x;
+v23 = y;
+vRes = eq(v22, v23);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+oneEnterList();
+do {
+oneEnterList();
+vRes = oneMatchString("ne");
+oneLeaveList();
+if (vRes == NIL) { break; }
+x = listExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = listExpr();
+vRes = y;
+} while (0);
+oneLeaveList();
+if (vRes == NIL) { break; }
+v26 = x;
+v27 = y;
+vRes = ne(v26, v27);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+oneEnterList();
+do {
+oneEnterList();
+vRes = oneMatchString("le");
+oneLeaveList();
+if (vRes == NIL) { break; }
+x = listExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = listExpr();
+vRes = y;
+} while (0);
+oneLeaveList();
+if (vRes == NIL) { break; }
+v30 = x;
+v31 = y;
+vRes = le(v30, v31);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+oneEnterList();
+do {
+oneEnterList();
+vRes = oneMatchString("ge");
+oneLeaveList();
+if (vRes == NIL) { break; }
+x = listExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = listExpr();
+vRes = y;
+} while (0);
+oneLeaveList();
+if (vRes == NIL) { break; }
+v34 = x;
+v35 = y;
+vRes = ge(v34, v35);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+oneEnterList();
+do {
+oneEnterList();
+vRes = oneMatchString("lt");
+oneLeaveList();
+if (vRes == NIL) { break; }
+x = listExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = listExpr();
+vRes = y;
+} while (0);
+oneLeaveList();
+if (vRes == NIL) { break; }
+v38 = x;
+v39 = y;
+vRes = lt(v38, v39);
+} while (0);
+if (vRes != NIL) { break; }
+oneBacktrack();
+do {
+oneEnterList();
+do {
+oneEnterList();
+vRes = oneMatchString("gt");
+oneLeaveList();
+if (vRes == NIL) { break; }
+x = listExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = listExpr();
+vRes = y;
+} while (0);
+oneLeaveList();
+if (vRes == NIL) { break; }
+v42 = x;
+v43 = y;
+vRes = gt(v42, v43);
+} while (0);
+} while (0);
+}
+

@@ -1,0 +1,44 @@
+expr = keywordExpr;
+
+keywordExpr = binaryExpr:x keywordsAndArgs:selArgs !{"send" x}.selArgs
+            | binaryExpr;
+
+keywordsAndArgs = !"":sel
+                  !{}:args
+                  ( #"keyword":kw !sel.kw:sel
+                    binaryExpr:x  !args.x:args )+ !{sel}.args;
+
+binaryExpr = unaryExpr:x
+             ( #"binarySel":sel unaryExpr:x !{"send" x sel y}:x )* !x;
+
+unaryExpr = primary:x
+            ( #"unarySel":sel !{"send" x sel}:x )* !x;
+
+primary = #"name"
+        | #"number"
+        | #"(" expr:x #")" !x;
+
+token t = !t == "name"      spaces name
+        | !t == "number"    spaces number
+        | !t == "keyword"   spaces keyword
+        | !t == "binarySel" spaces binarySel
+        | !t == "unarySel"  spaces unarySel
+        | !t == "("         spaces "("
+        | !t == ")"         spaces ")";
+
+name = letter:x (letter | digit)*:xs !{x}.xs;
+
+number = digit+:cs !toInt[cs];
+
+keyword = name:n ":" !n.":";
+
+binarySel = special:c1 special:c2 !c1.c2
+          | special:c1            !c1
+          | "-" special:c2        !"-".c2
+          | "|";
+
+unarySel = name:n ~":" !n;
+
+digit = char:x !x >= $0 && x <= $9 !x;
+
+letter = char:x !x >= $A && x <= $Z || x >= $a && x <= $z !x;
