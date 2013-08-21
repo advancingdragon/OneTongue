@@ -1,10 +1,10 @@
 ometa OneTranslator {
-    oper = 'mul' | 'div' | 'mod'
-         | 'add' | 'sub'
-         | 'concat'
-         | 'eq' | 'ne' | 'lt' | 'gt' | 'le' | 'ge'
-         | 'and'
-         | 'or',
+    oper = 'Mul' | 'Div' | 'Mod'
+         | 'Add' | 'Sub'
+         | 'Concat'
+         | 'Eq' | 'Ne' | 'Lt' | 'Gt' | 'Le' | 'Ge'
+         | 'And'
+         | 'Or',
 
     expr :dest = char:x
                  emitChar(x):c
@@ -36,14 +36,14 @@ ometa OneTranslator {
                    )?
                  ]
                  -> (xs +
-                     dest + " = " + n + "(" + args + ");\n")
+                     dest + " = one" + n + "(" + args + ");\n")
 
                | [ oper:op
                    genVar(0):v expr(v):x
                    genVar(0):w expr(w):y
                  ]
                  -> (x + y +
-                     dest + " = " + op + "(" + v + ", " + w + ");\n")
+                     dest + " = one" + op + "(" + v + ", " + w + ");\n")
 
                | [ 'match' number:x ]
                  -> (dest + " = oneMatchInt(" + x.toString() + ");\n")
@@ -104,14 +104,15 @@ ometa OneTranslator {
                      xs.join("if (" + dest + " == NIL) { break; }\n") +
                      "} while (0);\n")
 
+               // TODO backtracking
+
                | [ 'alt' expr(dest)*:xs ]
                  -> ("do {\n" +
-                     xs.join("if (" + dest + " != NIL) { break; }\n" +
-                             "oneBacktrack();\n") +
+                     xs.join("if (" + dest + " != NIL) { break; }\n") +
                      "} while (0);\n"),
 
     statement = [ 'stat' [ string:name string*:args ] expr("vRes"):x ]
-                -> ("struct oneValue *" + name +
+                -> ("struct oneValue *one" + name +
                     "(" + this.defineArgs(args) + ")\n" +
                     "{\n" +
                     this.defineVars() +

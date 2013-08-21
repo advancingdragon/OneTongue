@@ -1,36 +1,36 @@
-[ [ 'stat', [ 'expr' ], [ 'call', 'keywordExpr' ] ],
+[ [ 'stat', [ 'Expr' ], [ 'call', 'KeywordExpr' ] ],
   [ 'stat',
-    [ 'keywordExpr' ],
+    [ 'KeywordExpr' ],
     [ 'alt',
       [ 'seq',
-        [ 'set', 'x', [ 'call', 'binaryExpr' ] ],
-        [ 'set', 'selArgs', [ 'call', 'keywordsAndArgs' ] ],
-        [ 'concat',
+        [ 'set', 'x', [ 'call', 'BinaryExpr' ] ],
+        [ 'set', 'selArgs', [ 'call', 'KeywordsAndArgs' ] ],
+        [ 'Concat',
           [ 'list', [ [ 'list', 'send' ], [ 'var', 'x' ] ] ],
           [ 'var', 'selArgs' ] ] ],
-      [ 'call', 'binaryExpr' ] ] ],
+      [ 'call', 'BinaryExpr' ] ] ],
   [ 'stat',
-    [ 'keywordsAndArgs' ],
+    [ 'KeywordsAndArgs' ],
     [ 'seq',
       [ 'set', 'sel', [ 'list', '' ] ],
       [ 'set', 'args', [ 'list', [] ] ],
       [ 'plus',
         [ 'seq',
-          [ 'set', 'kw', [ 'call', 'token', [ 'list', 'keyword' ] ] ],
-          [ 'set', 'sel', [ 'concat', [ 'var', 'sel' ], [ 'var', 'kw' ] ] ],
-          [ 'set', 'x', [ 'call', 'binaryExpr' ] ],
+          [ 'set', 'kw', [ 'call', 'Token', [ 'list', 'Keyword' ] ] ],
+          [ 'set', 'sel', [ 'Concat', [ 'var', 'sel' ], [ 'var', 'kw' ] ] ],
+          [ 'set', 'x', [ 'call', 'BinaryExpr' ] ],
           [ 'set',
             'args',
-            [ 'concat', [ 'var', 'args' ], [ 'var', 'x' ] ] ] ] ],
-      [ 'concat', [ 'list', [ [ 'var', 'sel' ] ] ], [ 'var', 'args' ] ] ] ],
+            [ 'Concat', [ 'var', 'args' ], [ 'var', 'x' ] ] ] ] ],
+      [ 'Concat', [ 'list', [ [ 'var', 'sel' ] ] ], [ 'var', 'args' ] ] ] ],
   [ 'stat',
-    [ 'binaryExpr' ],
+    [ 'BinaryExpr' ],
     [ 'seq',
-      [ 'set', 'x', [ 'call', 'unaryExpr' ] ],
+      [ 'set', 'x', [ 'call', 'UnaryExpr' ] ],
       [ 'star',
         [ 'seq',
-          [ 'set', 'sel', [ 'call', 'token', [ 'list', 'binarySel' ] ] ],
-          [ 'set', 'x', [ 'call', 'unaryExpr' ] ],
+          [ 'set', 'sel', [ 'call', 'Token', [ 'list', 'BinarySel' ] ] ],
+          [ 'set', 'x', [ 'call', 'UnaryExpr' ] ],
           [ 'set',
             'x',
             [ 'list',
@@ -40,91 +40,91 @@
                 [ 'var', 'y' ] ] ] ] ] ],
       [ 'var', 'x' ] ] ],
   [ 'stat',
-    [ 'unaryExpr' ],
+    [ 'UnaryExpr' ],
     [ 'seq',
-      [ 'set', 'x', [ 'call', 'primary' ] ],
+      [ 'set', 'x', [ 'call', 'Primary' ] ],
       [ 'star',
         [ 'seq',
-          [ 'set', 'sel', [ 'call', 'token', [ 'list', 'unarySel' ] ] ],
+          [ 'set', 'sel', [ 'call', 'Token', [ 'list', 'UnarySel' ] ] ],
           [ 'set',
             'x',
             [ 'list',
               [ [ 'list', 'send' ], [ 'var', 'x' ], [ 'var', 'sel' ] ] ] ] ] ],
       [ 'var', 'x' ] ] ],
   [ 'stat',
-    [ 'primary' ],
+    [ 'Primary' ],
     [ 'alt',
-      [ 'call', 'token', [ 'list', 'name' ] ],
-      [ 'call', 'token', [ 'list', 'number' ] ],
+      [ 'call', 'Token', [ 'list', 'Name' ] ],
+      [ 'call', 'Token', [ 'list', 'Number' ] ],
       [ 'seq',
-        [ 'call', 'token', [ 'list', '(' ] ],
-        [ 'set', 'x', [ 'call', 'expr' ] ],
-        [ 'call', 'token', [ 'list', ')' ] ],
+        [ 'call', 'Token', [ 'list', '(' ] ],
+        [ 'set', 'x', [ 'call', 'Expr' ] ],
+        [ 'call', 'Token', [ 'list', ')' ] ],
         [ 'var', 'x' ] ] ] ],
   [ 'stat',
-    [ 'token', 't' ],
+    [ 'Token', 't' ],
     [ 'alt',
       [ 'seq',
-        [ 'eq', [ 'var', 't' ], [ 'list', 'name' ] ],
-        [ 'call', 'spaces' ],
-        [ 'call', 'name' ] ],
+        [ 'Eq', [ 'var', 't' ], [ 'list', 'Name' ] ],
+        [ 'call', 'Spaces' ],
+        [ 'call', 'Name' ] ],
       [ 'seq',
-        [ 'eq', [ 'var', 't' ], [ 'list', 'number' ] ],
-        [ 'call', 'spaces' ],
-        [ 'call', 'number' ] ],
+        [ 'Eq', [ 'var', 't' ], [ 'list', 'Number' ] ],
+        [ 'call', 'Spaces' ],
+        [ 'call', 'Number' ] ],
       [ 'seq',
-        [ 'eq', [ 'var', 't' ], [ 'list', 'keyword' ] ],
-        [ 'call', 'spaces' ],
-        [ 'call', 'keyword' ] ],
+        [ 'Eq', [ 'var', 't' ], [ 'list', 'Keyword' ] ],
+        [ 'call', 'Spaces' ],
+        [ 'call', 'Keyword' ] ],
       [ 'seq',
-        [ 'eq', [ 'var', 't' ], [ 'list', 'binarySel' ] ],
-        [ 'call', 'spaces' ],
-        [ 'call', 'binarySel' ] ],
+        [ 'Eq', [ 'var', 't' ], [ 'list', 'BinarySel' ] ],
+        [ 'call', 'Spaces' ],
+        [ 'call', 'BinarySel' ] ],
       [ 'seq',
-        [ 'eq', [ 'var', 't' ], [ 'list', 'unarySel' ] ],
-        [ 'call', 'spaces' ],
-        [ 'call', 'unarySel' ] ],
+        [ 'Eq', [ 'var', 't' ], [ 'list', 'UnarySel' ] ],
+        [ 'call', 'Spaces' ],
+        [ 'call', 'UnarySel' ] ],
       [ 'seq',
-        [ 'eq', [ 'var', 't' ], [ 'list', '(' ] ],
-        [ 'call', 'spaces' ],
+        [ 'Eq', [ 'var', 't' ], [ 'list', '(' ] ],
+        [ 'call', 'Spaces' ],
         [ 'matchList', '(' ] ],
       [ 'seq',
-        [ 'eq', [ 'var', 't' ], [ 'list', ')' ] ],
-        [ 'call', 'spaces' ],
+        [ 'Eq', [ 'var', 't' ], [ 'list', ')' ] ],
+        [ 'call', 'Spaces' ],
         [ 'matchList', ')' ] ] ] ],
   [ 'stat',
-    [ 'name' ],
+    [ 'Name' ],
     [ 'seq',
-      [ 'set', 'x', [ 'call', 'letter' ] ],
+      [ 'set', 'x', [ 'call', 'Letter' ] ],
       [ 'set',
         'xs',
-        [ 'star', [ 'alt', [ 'call', 'letter' ], [ 'call', 'digit' ] ] ] ],
-      [ 'concat', [ 'list', [ [ 'var', 'x' ] ] ], [ 'var', 'xs' ] ] ] ],
+        [ 'star', [ 'alt', [ 'call', 'Letter' ], [ 'call', 'Digit' ] ] ] ],
+      [ 'Concat', [ 'list', [ [ 'var', 'x' ] ] ], [ 'var', 'xs' ] ] ] ],
   [ 'stat',
-    [ 'number' ],
+    [ 'Number' ],
     [ 'seq',
-      [ 'set', 'cs', [ 'plus', [ 'call', 'digit' ] ] ],
-      [ 'call', 'toInt', [ 'var', 'cs' ] ] ] ],
+      [ 'set', 'cs', [ 'plus', [ 'call', 'Digit' ] ] ],
+      [ 'call', 'ToInt', [ 'var', 'cs' ] ] ] ],
   [ 'stat',
-    [ 'keyword' ],
+    [ 'Keyword' ],
     [ 'seq',
-      [ 'set', 'n', [ 'call', 'name' ] ],
+      [ 'set', 'n', [ 'call', 'Name' ] ],
       [ 'matchList', ':' ],
-      [ 'concat', [ 'var', 'n' ], [ 'list', ':' ] ] ] ],
+      [ 'Concat', [ 'var', 'n' ], [ 'list', ':' ] ] ] ],
   [ 'stat',
-    [ 'binarySel' ],
+    [ 'BinarySel' ],
     [ 'alt',
       [ 'seq',
-        [ 'set', 'c1', [ 'call', 'special' ] ],
-        [ 'set', 'c2', [ 'call', 'special' ] ],
-        [ 'concat', [ 'var', 'c1' ], [ 'var', 'c2' ] ] ],
+        [ 'set', 'c1', [ 'call', 'Special' ] ],
+        [ 'set', 'c2', [ 'call', 'Special' ] ],
+        [ 'Concat', [ 'var', 'c1' ], [ 'var', 'c2' ] ] ],
       [ 'seq',
-        [ 'set', 'c1', [ 'call', 'special' ] ],
+        [ 'set', 'c1', [ 'call', 'Special' ] ],
         [ 'var', 'c1' ] ],
       [ 'seq',
         [ 'matchList', '-' ],
-        [ 'set', 'c2', [ 'call', 'special' ] ],
-        [ 'concat', [ 'list', '-' ], [ 'var', 'c2' ] ] ],
+        [ 'set', 'c2', [ 'call', 'Special' ] ],
+        [ 'Concat', [ 'list', '-' ], [ 'var', 'c2' ] ] ],
       [ 'matchList', '|' ] ] ],
   [ 'stat',
     [ 'unarySel' ],
@@ -136,30 +136,30 @@
     [ 'digit' ],
     [ 'seq',
       [ 'set', 'x', [ 'call', 'char' ] ],
-      [ 'and',
-        [ 'ge', [ 'var', 'x' ], '0' ],
-        [ 'le', [ 'var', 'x' ], '9' ] ],
+      [ 'And',
+        [ 'Ge', [ 'var', 'x' ], '0' ],
+        [ 'Le', [ 'var', 'x' ], '9' ] ],
       [ 'var', 'x' ] ] ],
   [ 'stat',
     [ 'letter' ],
     [ 'seq',
       [ 'set', 'x', [ 'call', 'char' ] ],
-      [ 'or',
-        [ 'and',
-          [ 'ge', [ 'var', 'x' ], 'A' ],
-          [ 'le', [ 'var', 'x' ], 'Z' ] ],
-        [ 'and',
-          [ 'ge', [ 'var', 'x' ], 'a' ],
-          [ 'le', [ 'var', 'x' ], 'z' ] ] ],
+      [ 'Or',
+        [ 'And',
+          [ 'Ge', [ 'var', 'x' ], 'A' ],
+          [ 'Le', [ 'var', 'x' ], 'Z' ] ],
+        [ 'And',
+          [ 'Ge', [ 'var', 'x' ], 'a' ],
+          [ 'Le', [ 'var', 'x' ], 'z' ] ] ],
       [ 'var', 'x' ] ] ] ]
 
-struct oneValue *expr()
+struct oneValue *oneExpr()
 {
 struct oneValue *v0;
-vRes = keywordExpr();
+vRes = oneKeywordExpr();
 }
 
-struct oneValue *keywordExpr()
+struct oneValue *oneKeywordExpr()
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -170,10 +170,10 @@ struct oneValue *v5;
 struct oneValue *v6;
 do {
 do {
-x = binaryExpr();
+x = oneBinaryExpr();
 vRes = x;
 if (vRes == NIL) { break; }
-selArgs = keywordsAndArgs();
+selArgs = oneKeywordsAndArgs();
 vRes = selArgs;
 if (vRes == NIL) { break; }
 v2 = oneNewList();
@@ -190,15 +190,14 @@ oneAppend(v2, v3);
 v3 = x;
 oneAppend(v2, v3);
 v5 = selArgs;
-vRes = concat(v2, v5);
+vRes = oneConcat(v2, v5);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
-vRes = binaryExpr();
+vRes = oneBinaryExpr();
 } while (0);
 }
 
-struct oneValue *keywordsAndArgs()
+struct oneValue *oneKeywordsAndArgs()
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -223,7 +222,7 @@ vRes = args;
 if (vRes == NIL) { break; }
 do {
 v3 = oneNewList();
-v4 = oneNewChar('k');
+v4 = oneNewChar('K');
 oneAppend(v3, v4);
 v4 = oneNewChar('e');
 oneAppend(v3, v4);
@@ -237,20 +236,20 @@ v4 = oneNewChar('r');
 oneAppend(v3, v4);
 v4 = oneNewChar('d');
 oneAppend(v3, v4);
-kw = token(v3);
+kw = oneToken(v3);
 v2 = kw;
 if (v2 == NIL) { break; }
 v6 = sel;
 v7 = kw;
-sel = concat(v6, v7);
+sel = oneConcat(v6, v7);
 v2 = sel;
 if (v2 == NIL) { break; }
-x = binaryExpr();
+x = oneBinaryExpr();
 v2 = x;
 if (v2 == NIL) { break; }
 v9 = args;
 v10 = x;
-args = concat(v9, v10);
+args = oneConcat(v9, v10);
 v2 = args;
 } while (0);
 if (v2 == NIL) {
@@ -261,7 +260,7 @@ oneAppend(vRes, v2);
 do {
 do {
 v3 = oneNewList();
-v4 = oneNewChar('k');
+v4 = oneNewChar('K');
 oneAppend(v3, v4);
 v4 = oneNewChar('e');
 oneAppend(v3, v4);
@@ -275,20 +274,20 @@ v4 = oneNewChar('r');
 oneAppend(v3, v4);
 v4 = oneNewChar('d');
 oneAppend(v3, v4);
-kw = token(v3);
+kw = oneToken(v3);
 v2 = kw;
 if (v2 == NIL) { break; }
 v6 = sel;
 v7 = kw;
-sel = concat(v6, v7);
+sel = oneConcat(v6, v7);
 v2 = sel;
 if (v2 == NIL) { break; }
-x = binaryExpr();
+x = oneBinaryExpr();
 v2 = x;
 if (v2 == NIL) { break; }
 v9 = args;
 v10 = x;
-args = concat(v9, v10);
+args = oneConcat(v9, v10);
 v2 = args;
 } while (0);
 if (v2 == NIL) { break; }
@@ -300,11 +299,11 @@ v11 = oneNewList();
 v12 = sel;
 oneAppend(v11, v12);
 v13 = args;
-vRes = concat(v11, v13);
+vRes = oneConcat(v11, v13);
 } while (0);
 }
 
-struct oneValue *binaryExpr()
+struct oneValue *oneBinaryExpr()
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -315,14 +314,14 @@ struct oneValue *v5;
 struct oneValue *v6;
 struct oneValue *v7;
 do {
-x = unaryExpr();
+x = oneUnaryExpr();
 vRes = x;
 if (vRes == NIL) { break; }
 vRes = oneNewList();
 do {
 do {
 v2 = oneNewList();
-v3 = oneNewChar('b');
+v3 = oneNewChar('B');
 oneAppend(v2, v3);
 v3 = oneNewChar('i');
 oneAppend(v2, v3);
@@ -340,10 +339,10 @@ v3 = oneNewChar('e');
 oneAppend(v2, v3);
 v3 = oneNewChar('l');
 oneAppend(v2, v3);
-sel = token(v2);
+sel = oneToken(v2);
 v1 = sel;
 if (v1 == NIL) { break; }
-x = unaryExpr();
+x = oneUnaryExpr();
 v1 = x;
 if (v1 == NIL) { break; }
 x = oneNewList();
@@ -373,7 +372,7 @@ vRes = x;
 } while (0);
 }
 
-struct oneValue *unaryExpr()
+struct oneValue *oneUnaryExpr()
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -383,14 +382,14 @@ struct oneValue *v4;
 struct oneValue *v5;
 struct oneValue *v6;
 do {
-x = primary();
+x = onePrimary();
 vRes = x;
 if (vRes == NIL) { break; }
 vRes = oneNewList();
 do {
 do {
 v2 = oneNewList();
-v3 = oneNewChar('u');
+v3 = oneNewChar('U');
 oneAppend(v2, v3);
 v3 = oneNewChar('n');
 oneAppend(v2, v3);
@@ -406,7 +405,7 @@ v3 = oneNewChar('e');
 oneAppend(v2, v3);
 v3 = oneNewChar('l');
 oneAppend(v2, v3);
-sel = token(v2);
+sel = oneToken(v2);
 v1 = sel;
 if (v1 == NIL) { break; }
 x = oneNewList();
@@ -434,7 +433,7 @@ vRes = x;
 } while (0);
 }
 
-struct oneValue *primary()
+struct oneValue *onePrimary()
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -451,7 +450,7 @@ struct oneValue *v11;
 struct oneValue *v12;
 do {
 v0 = oneNewList();
-v1 = oneNewChar('n');
+v1 = oneNewChar('N');
 oneAppend(v0, v1);
 v1 = oneNewChar('a');
 oneAppend(v0, v1);
@@ -459,11 +458,10 @@ v1 = oneNewChar('m');
 oneAppend(v0, v1);
 v1 = oneNewChar('e');
 oneAppend(v0, v1);
-vRes = token(v0);
+vRes = oneToken(v0);
 if (vRes != NIL) { break; }
-oneBacktrack();
 v3 = oneNewList();
-v4 = oneNewChar('n');
+v4 = oneNewChar('N');
 oneAppend(v3, v4);
 v4 = oneNewChar('u');
 oneAppend(v3, v4);
@@ -475,29 +473,28 @@ v4 = oneNewChar('e');
 oneAppend(v3, v4);
 v4 = oneNewChar('r');
 oneAppend(v3, v4);
-vRes = token(v3);
+vRes = oneToken(v3);
 if (vRes != NIL) { break; }
-oneBacktrack();
 do {
 v6 = oneNewList();
 v7 = oneNewChar('(');
 oneAppend(v6, v7);
-vRes = token(v6);
+vRes = oneToken(v6);
 if (vRes == NIL) { break; }
-x = expr();
+x = oneExpr();
 vRes = x;
 if (vRes == NIL) { break; }
 v10 = oneNewList();
 v11 = oneNewChar(')');
 oneAppend(v10, v11);
-vRes = token(v10);
+vRes = oneToken(v10);
 if (vRes == NIL) { break; }
 vRes = x;
 } while (0);
 } while (0);
 }
 
-struct oneValue *token(struct oneValue *t)
+struct oneValue *oneToken(struct oneValue *t)
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -536,7 +533,7 @@ do {
 do {
 v0 = t;
 v1 = oneNewList();
-v2 = oneNewChar('n');
+v2 = oneNewChar('N');
 oneAppend(v1, v2);
 v2 = oneNewChar('a');
 oneAppend(v1, v2);
@@ -544,18 +541,17 @@ v2 = oneNewChar('m');
 oneAppend(v1, v2);
 v2 = oneNewChar('e');
 oneAppend(v1, v2);
-vRes = eq(v0, v1);
+vRes = oneEq(v0, v1);
 if (vRes == NIL) { break; }
-vRes = spaces();
+vRes = oneSpaces();
 if (vRes == NIL) { break; }
-vRes = name();
+vRes = oneName();
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
 do {
 v5 = t;
 v6 = oneNewList();
-v7 = oneNewChar('n');
+v7 = oneNewChar('N');
 oneAppend(v6, v7);
 v7 = oneNewChar('u');
 oneAppend(v6, v7);
@@ -567,18 +563,17 @@ v7 = oneNewChar('e');
 oneAppend(v6, v7);
 v7 = oneNewChar('r');
 oneAppend(v6, v7);
-vRes = eq(v5, v6);
+vRes = oneEq(v5, v6);
 if (vRes == NIL) { break; }
-vRes = spaces();
+vRes = oneSpaces();
 if (vRes == NIL) { break; }
-vRes = number();
+vRes = oneNumber();
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
 do {
 v10 = t;
 v11 = oneNewList();
-v12 = oneNewChar('k');
+v12 = oneNewChar('K');
 oneAppend(v11, v12);
 v12 = oneNewChar('e');
 oneAppend(v11, v12);
@@ -592,18 +587,17 @@ v12 = oneNewChar('r');
 oneAppend(v11, v12);
 v12 = oneNewChar('d');
 oneAppend(v11, v12);
-vRes = eq(v10, v11);
+vRes = oneEq(v10, v11);
 if (vRes == NIL) { break; }
-vRes = spaces();
+vRes = oneSpaces();
 if (vRes == NIL) { break; }
-vRes = keyword();
+vRes = oneKeyword();
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
 do {
 v15 = t;
 v16 = oneNewList();
-v17 = oneNewChar('b');
+v17 = oneNewChar('B');
 oneAppend(v16, v17);
 v17 = oneNewChar('i');
 oneAppend(v16, v17);
@@ -621,18 +615,17 @@ v17 = oneNewChar('e');
 oneAppend(v16, v17);
 v17 = oneNewChar('l');
 oneAppend(v16, v17);
-vRes = eq(v15, v16);
+vRes = oneEq(v15, v16);
 if (vRes == NIL) { break; }
-vRes = spaces();
+vRes = oneSpaces();
 if (vRes == NIL) { break; }
-vRes = binarySel();
+vRes = oneBinarySel();
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
 do {
 v20 = t;
 v21 = oneNewList();
-v22 = oneNewChar('u');
+v22 = oneNewChar('U');
 oneAppend(v21, v22);
 v22 = oneNewChar('n');
 oneAppend(v21, v22);
@@ -648,42 +641,40 @@ v22 = oneNewChar('e');
 oneAppend(v21, v22);
 v22 = oneNewChar('l');
 oneAppend(v21, v22);
-vRes = eq(v20, v21);
+vRes = oneEq(v20, v21);
 if (vRes == NIL) { break; }
-vRes = spaces();
+vRes = oneSpaces();
 if (vRes == NIL) { break; }
-vRes = unarySel();
+vRes = oneUnarySel();
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
 do {
 v25 = t;
 v26 = oneNewList();
 v27 = oneNewChar('(');
 oneAppend(v26, v27);
-vRes = eq(v25, v26);
+vRes = oneEq(v25, v26);
 if (vRes == NIL) { break; }
-vRes = spaces();
+vRes = oneSpaces();
 if (vRes == NIL) { break; }
 vRes = oneMatchString("(");
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
 do {
 v29 = t;
 v30 = oneNewList();
 v31 = oneNewChar(')');
 oneAppend(v30, v31);
-vRes = eq(v29, v30);
+vRes = oneEq(v29, v30);
 if (vRes == NIL) { break; }
-vRes = spaces();
+vRes = oneSpaces();
 if (vRes == NIL) { break; }
 vRes = oneMatchString(")");
 } while (0);
 } while (0);
 }
 
-struct oneValue *name()
+struct oneValue *oneName()
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -693,16 +684,15 @@ struct oneValue *v4;
 struct oneValue *v5;
 struct oneValue *v6;
 do {
-x = letter();
+x = oneLetter();
 vRes = x;
 if (vRes == NIL) { break; }
 xs = oneNewList();
 do {
 do {
-v1 = letter();
+v1 = oneLetter();
 if (v1 != NIL) { break; }
-oneBacktrack();
-v1 = digit();
+v1 = oneDigit();
 } while (0);
 if (v1 == NIL) { break; }
 oneAppend(xs, v1);
@@ -713,25 +703,25 @@ v4 = oneNewList();
 v5 = x;
 oneAppend(v4, v5);
 v6 = xs;
-vRes = concat(v4, v6);
+vRes = oneConcat(v4, v6);
 } while (0);
 }
 
-struct oneValue *number()
+struct oneValue *oneNumber()
 {
 struct oneValue *v0;
 struct oneValue *v1;
 struct oneValue *v2;
 struct oneValue *v3;
 do {
-v0 = digit();
+v0 = oneDigit();
 if (v0 == NIL) {
 cs = NIL;
 } else {
 cs = oneNewList();
 oneAppend(cs, v0);
 do {
-v0 = digit();
+v0 = oneDigit();
 if (v0 == NIL) { break; }
 oneAppend(cs, v0);
 } while (0);
@@ -739,18 +729,18 @@ oneAppend(cs, v0);
 vRes = cs;
 if (vRes == NIL) { break; }
 v2 = cs;
-vRes = toInt(v2);
+vRes = oneToInt(v2);
 } while (0);
 }
 
-struct oneValue *keyword()
+struct oneValue *oneKeyword()
 {
 struct oneValue *v0;
 struct oneValue *v1;
 struct oneValue *v2;
 struct oneValue *v3;
 do {
-n = name();
+n = oneName();
 vRes = n;
 if (vRes == NIL) { break; }
 vRes = oneMatchString(":");
@@ -759,11 +749,11 @@ v1 = n;
 v2 = oneNewList();
 v3 = oneNewChar(':');
 oneAppend(v2, v3);
-vRes = concat(v1, v2);
+vRes = oneConcat(v1, v2);
 } while (0);
 }
 
-struct oneValue *binarySel()
+struct oneValue *oneBinarySel()
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -776,50 +766,47 @@ struct oneValue *v7;
 struct oneValue *v8;
 do {
 do {
-c1 = special();
+c1 = oneSpecial();
 vRes = c1;
 if (vRes == NIL) { break; }
-c2 = special();
+c2 = oneSpecial();
 vRes = c2;
 if (vRes == NIL) { break; }
 v2 = c1;
 v3 = c2;
-vRes = concat(v2, v3);
+vRes = oneConcat(v2, v3);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
 do {
-c1 = special();
+c1 = oneSpecial();
 vRes = c1;
 if (vRes == NIL) { break; }
 vRes = c1;
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
 do {
 vRes = oneMatchString("-");
 if (vRes == NIL) { break; }
-c2 = special();
+c2 = oneSpecial();
 vRes = c2;
 if (vRes == NIL) { break; }
 v6 = oneNewList();
 v7 = oneNewChar('-');
 oneAppend(v6, v7);
 v8 = c2;
-vRes = concat(v6, v8);
+vRes = oneConcat(v6, v8);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
 vRes = oneMatchString("|");
 } while (0);
 }
 
-struct oneValue *unarySel()
+struct oneValue *oneunarySel()
 {
 struct oneValue *v0;
 struct oneValue *v1;
 do {
-n = name();
+n = onename();
 vRes = n;
 if (vRes == NIL) { break; }
 v1 = oneMatchString(":");
@@ -829,7 +816,7 @@ vRes = n;
 } while (0);
 }
 
-struct oneValue *digit()
+struct oneValue *onedigit()
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -839,22 +826,22 @@ struct oneValue *v4;
 struct oneValue *v5;
 struct oneValue *v6;
 do {
-x = char();
+x = onechar();
 vRes = x;
 if (vRes == NIL) { break; }
 v2 = x;
 v3 = oneNewChar('0');
-v1 = ge(v2, v3);
+v1 = oneGe(v2, v3);
 v5 = x;
 v6 = oneNewChar('9');
-v4 = le(v5, v6);
-vRes = and(v1, v4);
+v4 = oneLe(v5, v6);
+vRes = oneAnd(v1, v4);
 if (vRes == NIL) { break; }
 vRes = x;
 } while (0);
 }
 
-struct oneValue *letter()
+struct oneValue *oneletter()
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -872,24 +859,24 @@ struct oneValue *v12;
 struct oneValue *v13;
 struct oneValue *v14;
 do {
-x = char();
+x = onechar();
 vRes = x;
 if (vRes == NIL) { break; }
 v3 = x;
 v4 = oneNewChar('A');
-v2 = ge(v3, v4);
+v2 = oneGe(v3, v4);
 v6 = x;
 v7 = oneNewChar('Z');
-v5 = le(v6, v7);
-v1 = and(v2, v5);
+v5 = oneLe(v6, v7);
+v1 = oneAnd(v2, v5);
 v10 = x;
 v11 = oneNewChar('a');
-v9 = ge(v10, v11);
+v9 = oneGe(v10, v11);
 v13 = x;
 v14 = oneNewChar('z');
-v12 = le(v13, v14);
-v8 = and(v9, v12);
-vRes = or(v1, v8);
+v12 = oneLe(v13, v14);
+v8 = oneAnd(v9, v12);
+vRes = oneOr(v1, v8);
 if (vRes == NIL) { break; }
 vRes = x;
 } while (0);

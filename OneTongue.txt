@@ -34,20 +34,20 @@ ometa OneTongue {
     singleQuote = "'" (~"'" char)*:cs "'"
                   -> (cs.join("")),
 
-    oper :p = ?(p === 0) ( "||" -> "or" )
-            | ?(p === 1) ( "&&" -> "and" )
-            | ?(p === 2) ( "==" -> "eq"
-                         | "<>" -> "ne"
-                         | "<=" -> "le"
-                         | ">=" -> "ge"
-                         | "<"  -> "lt"
-                         | ">"  -> "gt" )
-            | ?(p === 3) ( "."  -> "concat" )
-            | ?(p === 4) ( "+"  -> "add"
-                         | "-"  -> "sub" )
-            | ?(p === 5) ( "*"  -> "mul"
-                         | "/"  -> "div"
-                         | "%"  -> "mod" ),
+    oper :p = ?(p === 0) ( "||" -> "Or" )
+            | ?(p === 1) ( "&&" -> "And" )
+            | ?(p === 2) ( "==" -> "Eq"
+                         | "<>" -> "Ne"
+                         | "<=" -> "Le"
+                         | ">=" -> "Ge"
+                         | "<"  -> "Lt"
+                         | ">"  -> "Gt" )
+            | ?(p === 3) ( "."  -> "Concat" )
+            | ?(p === 4) ( "+"  -> "Add"
+                         | "-"  -> "Sub" )
+            | ?(p === 5) ( "*"  -> "Mul"
+                         | "/"  -> "Div"
+                         | "%"  -> "Mod" ),
 
     call = name:n "[" action(0)*:xs "]" -> (["call", n].concat(xs)),
 
@@ -72,7 +72,7 @@ ometa OneTongue {
           | name:n              -> ["call", n]
           | number:x            -> ["match", x]
           | doubleQuote:xs      -> ["matchList", xs]
-          | "#" doubleQuote:xs  -> ["call", "token", ["list", xs]]
+          | "#" doubleQuote:xs  -> ["call", "Token", ["list", xs]]
           | "{" expr:x "}"      -> ["enterList", x]
           | singleQuote:xs      -> ["enterList", ["matchList", xs]]
           | "~" expr5:x         -> ["not", x]

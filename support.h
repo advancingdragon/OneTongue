@@ -7,9 +7,9 @@ enum oneTag {
     TAG_CHAR, TAG_INT, TAG_LIST, TAG_STRING
 };
 
-struct oneList {
-    struct oneValue *node;
-    struct oneList *next;
+struct oneListNode {
+    struct oneValue *value;
+    struct oneListNode *next;
 };
 
 struct oneValue {
@@ -18,8 +18,8 @@ struct oneValue {
         char charValue;
         int intValue;
         struct {
-            struct oneList *listValueFirst;
-            struct oneList *listValueLast;
+            struct oneListNode *listValueFirst;
+            struct oneListNode *listValueLast;
         };
         char *stringValue; // optimization; strings are lists of chars
     };
@@ -28,13 +28,34 @@ struct oneValue {
 struct oneValue *oneNewChar(char c);
 struct oneValue *oneNewInt(int i);
 struct oneValue *oneNewList(void);
-void oneAppend(struct oneValue *list, struct oneValue *item);
+void oneAppend(struct oneValue *list, struct oneValue *value);
 
+void onePrint(struct oneValue *value);
+
+struct oneValue *oneMatchChar(char c);
 struct oneValue *oneMatchInt(int i);
 struct oneValue *oneMatchString(char *s);
 void oneEnterList(void);
 void oneLeaveList(void);
 
+struct oneValue *oneMul(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneDiv(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneMod(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneAdd(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneSub(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneConcat(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneEq(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneNe(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneLt(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneGt(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneLe(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneGe(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneAnd(struct oneValue *x, struct oneValue *y);
+struct oneValue *oneOr(struct oneValue *x, struct oneValue *y);
+
 extern struct oneValue *oneInput;
+extern struct oneListNode *oneCurrentNode;
+extern int oneCurrentStringPos; // used for string optimization
+
 
 #endif

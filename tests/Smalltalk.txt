@@ -1,40 +1,40 @@
-expr = keywordExpr;
+Expr = KeywordExpr;
 
-keywordExpr = binaryExpr:x keywordsAndArgs:selArgs !{"send" x}.selArgs
-            | binaryExpr;
+KeywordExpr = BinaryExpr:x KeywordsAndArgs:selArgs !{"send" x}.selArgs
+            | BinaryExpr;
 
-keywordsAndArgs = !"":sel
+KeywordsAndArgs = !"":sel
                   !{}:args
-                  ( #"keyword":kw !sel.kw:sel
-                    binaryExpr:x  !args.x:args )+ !{sel}.args;
+                  ( #"Keyword":kw !sel.kw:sel
+                    BinaryExpr:x  !args.x:args )+ !{sel}.args;
 
-binaryExpr = unaryExpr:x
-             ( #"binarySel":sel unaryExpr:x !{"send" x sel y}:x )* !x;
+BinaryExpr = UnaryExpr:x
+             ( #"BinarySel":sel UnaryExpr:x !{"send" x sel y}:x )* !x;
 
-unaryExpr = primary:x
-            ( #"unarySel":sel !{"send" x sel}:x )* !x;
+UnaryExpr = Primary:x
+            ( #"UnarySel":sel !{"send" x sel}:x )* !x;
 
-primary = #"name"
-        | #"number"
-        | #"(" expr:x #")" !x;
+Primary = #"Name"
+        | #"Number"
+        | #"(" Expr:x #")" !x;
 
-token t = !t == "name"      spaces name
-        | !t == "number"    spaces number
-        | !t == "keyword"   spaces keyword
-        | !t == "binarySel" spaces binarySel
-        | !t == "unarySel"  spaces unarySel
-        | !t == "("         spaces "("
-        | !t == ")"         spaces ")";
+Token t = !t == "Name"      Spaces Name
+        | !t == "Number"    Spaces Number
+        | !t == "Keyword"   Spaces Keyword
+        | !t == "BinarySel" Spaces BinarySel
+        | !t == "UnarySel"  Spaces UnarySel
+        | !t == "("         Spaces "("
+        | !t == ")"         Spaces ")";
 
-name = letter:x (letter | digit)*:xs !{x}.xs;
+Name = Letter:x (Letter | Digit)*:xs !{x}.xs;
 
-number = digit+:cs !toInt[cs];
+Number = Digit+:cs !ToInt[cs];
 
-keyword = name:n ":" !n.":";
+Keyword = Name:n ":" !n.":";
 
-binarySel = special:c1 special:c2 !c1.c2
-          | special:c1            !c1
-          | "-" special:c2        !"-".c2
+BinarySel = Special:c1 Special:c2 !c1.c2
+          | Special:c1            !c1
+          | "-" Special:c2        !"-".c2
           | "|";
 
 unarySel = name:n ~":" !n;

@@ -1,41 +1,41 @@
-digit = char:x !x >= $0 && x <= $9 !x;
+Digit = Char:x !x >= $0 && x <= $9 !x;
 
-number = digit+:cs !toInt[cs];
+Number = Digit+:cs !ToInt[cs];
 
-relOp = #"==" !"eq"
+RelOp = #"==" !"eq"
       | #"<>" !"ne"
       | #"<=" !"le"
       | #">=" !"ge"
       | #"<"  !"lt"
       | #">"  !"gt";
 
-addOp = #"+"  !"add"
+AddOp = #"+"  !"add"
       | #"-"  !"sub"
       | #"or" !"or";
 
-mulOp = #"*"   !"mul"
+MulOp = #"*"   !"mul"
       | #"/"   !"div"
       | #"and" !"and";
 
-comp = expr:x ( relOp:op expr:y !{op x y}:x )* !x;
+Comp = Expr:x ( RelOp:op Expr:y !{op x y}:x )* !x;
 
-expr = #"-" term:x !{"neg" x}:x ( addOp:op term:y !{op x y}:x )* !x
-     |      term:x              ( addOp:op term:y !{op x y}:x )* !x;
+Expr = #"-" Term:x !{"neg" x}:x ( AddOp:op Term:y !{op x y}:x )* !x
+     |      Term:x              ( AddOp:op Term:y !{op x y}:x )* !x;
 
-term = factor:x ( mulOp:op factor:y !{op x y}:x )* !x;
+Term = Factor:x ( MulOp:op Factor:y !{op x y}:x )* !x;
 
-factor = number
-       | #"(" comp:x #")" !x;
+Factor = Number
+       | #"(" Comp:x #")" !x;
 
-listExpr = number
-         | { 'neg' listExpr:x }            !neg[x]
-         | { 'mul' listExpr:x listExpr:y } !x * y
-         | { 'div' listExpr:x listExpr:y } !x / y
-         | { 'add' listExpr:x listExpr:y } !x + y
-         | { 'sub' listExpr:x listExpr:y } !x - y
-         | { 'eq'  listExpr:x listExpr:y } !x == y
-         | { 'ne'  listExpr:x listExpr:y } !x <> y
-         | { 'le'  listExpr:x listExpr:y } !x <= y
-         | { 'ge'  listExpr:x listExpr:y } !x >= y
-         | { 'lt'  listExpr:x listExpr:y } !x < y
-         | { 'gt'  listExpr:x listExpr:y } !x > y;
+ListExpr = Number
+         | { 'neg' ListExpr:x }            !Neg[x]
+         | { 'mul' ListExpr:x ListExpr:y } !x * y
+         | { 'div' ListExpr:x ListExpr:y } !x / y
+         | { 'add' ListExpr:x ListExpr:y } !x + y
+         | { 'sub' ListExpr:x ListExpr:y } !x - y
+         | { 'eq'  ListExpr:x ListExpr:y } !x == y
+         | { 'ne'  ListExpr:x ListExpr:y } !x <> y
+         | { 'le'  ListExpr:x ListExpr:y } !x <= y
+         | { 'ge'  ListExpr:x ListExpr:y } !x >= y
+         | { 'lt'  ListExpr:x ListExpr:y } !x < y
+         | { 'gt'  ListExpr:x ListExpr:y } !x > y;
