@@ -48,10 +48,10 @@ ometa OneTranslator {
                | [ 'match' number:x ]
                  -> (dest + " = oneMatchInt(" + x.toString() + ");\n")
 
+               // TODO enterList
+
                | [ 'enterList' expr(dest):x ]
-                 -> ("oneEnterList();\n" +
-                     x +
-                     "oneLeaveList();\n")
+                 -> (x)
 
                | [ 'matchList' [ char*:xs ] ]
                  emitString(xs.join("")):s

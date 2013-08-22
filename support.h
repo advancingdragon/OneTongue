@@ -4,7 +4,7 @@
 #define NIL NULL
 
 enum oneTag {
-    TAG_CHAR, TAG_INT, TAG_LIST, TAG_STRING
+    TAG_CHAR, TAG_INT, TAG_LIST
 };
 
 struct oneListNode {
@@ -21,7 +21,6 @@ struct oneValue {
             struct oneListNode *listValueFirst;
             struct oneListNode *listValueLast;
         };
-        char *stringValue; // optimization; strings are lists of chars
     };
 };
 
@@ -35,8 +34,6 @@ void onePrint(struct oneValue *value);
 struct oneValue *oneMatchChar(char c);
 struct oneValue *oneMatchInt(int i);
 struct oneValue *oneMatchString(char *s);
-void oneEnterList(void);
-void oneLeaveList(void);
 
 struct oneValue *oneMul(struct oneValue *x, struct oneValue *y);
 struct oneValue *oneDiv(struct oneValue *x, struct oneValue *y);
@@ -55,7 +52,5 @@ struct oneValue *oneOr(struct oneValue *x, struct oneValue *y);
 
 extern struct oneValue *oneInput;
 extern struct oneListNode *oneCurrentNode;
-extern int oneCurrentStringPos; // used for string optimization
-
 
 #endif

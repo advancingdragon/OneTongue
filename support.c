@@ -4,7 +4,6 @@
 
 struct oneValue *oneInput;
 struct oneListNode *oneCurrentNode;
-int oneCurrentStringPos; // used for string optimization
 
 struct oneValue *oneNewChar(char c)
 {
@@ -147,16 +146,6 @@ struct oneValue *oneMatchString(char *s)
         oneCurrentNode = oneCurrentNode->next;
     }
     return result;
-}
-
-void oneEnterList(void)
-{
-    // TODO
-}
-
-void oneLeaveList(void)
-{
-    // TODO
 }
 
 int main(int argc, char **argv)
