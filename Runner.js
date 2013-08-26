@@ -7,10 +7,10 @@ util = require('util');
 loadOMeta("OneTongue.txt");
 loadOMeta("OneTranslator.txt");
 
-var source = fs.readFileSync(__dirname + "/tests/Smalltalk.txt", 'utf8')
+var source = fs.readFileSync(__dirname + "/tests/Calculator.txt", 'utf8')
 var tree = OneTongue.matchAll(source, "program");
 var code = OneTranslator.match(tree, "program");
 
-console.log(util.inspect(tree, { depth: null }));
-console.log();
+// console.log(util.inspect(tree, { depth: null }));
+// console.log();
 console.log(code);

@@ -1,0 +1,25 @@
+Virtual Stack Machine Instructions
+
+SIMPLE WORDS
+
+Call name arity
+PushChar char
+PushInt int
+PushList
+PushVar name
+SetVar name (does not drop TOS)
+Dup
+Drop
+Break
+
+MATCH OPERATIONS THAT TAKE C CONSTANTS
+
+MatchString string
+MatchInt int
+
+BLOCK WORDS
+
+IfZero (does not drop TOS)
+IfNotZero (does not drop TOS)
+Do
+EnterList

@@ -1,197 +1,16 @@
-[ [ 'stat',
-    [ 'Digit' ],
-    [ 'seq',
-      [ 'set', 'x', [ 'call', 'Char' ] ],
-      [ 'And',
-        [ 'Ge', [ 'var', 'x' ], '0' ],
-        [ 'Le', [ 'var', 'x' ], '9' ] ],
-      [ 'var', 'x' ] ] ],
-  [ 'stat',
-    [ 'Number' ],
-    [ 'seq',
-      [ 'set', 'cs', [ 'plus', [ 'call', 'Digit' ] ] ],
-      [ 'call', 'ToInt', [ 'var', 'cs' ] ] ] ],
-  [ 'stat',
-    [ 'RelOp' ],
-    [ 'alt',
-      [ 'seq',
-        [ 'call', 'Token', [ 'list', '==' ] ],
-        [ 'list', 'eq' ] ],
-      [ 'seq',
-        [ 'call', 'Token', [ 'list', '<>' ] ],
-        [ 'list', 'ne' ] ],
-      [ 'seq',
-        [ 'call', 'Token', [ 'list', '<=' ] ],
-        [ 'list', 'le' ] ],
-      [ 'seq',
-        [ 'call', 'Token', [ 'list', '>=' ] ],
-        [ 'list', 'ge' ] ],
-      [ 'seq', [ 'call', 'Token', [ 'list', '<' ] ], [ 'list', 'lt' ] ],
-      [ 'seq', [ 'call', 'Token', [ 'list', '>' ] ], [ 'list', 'gt' ] ] ] ],
-  [ 'stat',
-    [ 'AddOp' ],
-    [ 'alt',
-      [ 'seq',
-        [ 'call', 'Token', [ 'list', '+' ] ],
-        [ 'list', 'add' ] ],
-      [ 'seq',
-        [ 'call', 'Token', [ 'list', '-' ] ],
-        [ 'list', 'sub' ] ],
-      [ 'seq',
-        [ 'call', 'Token', [ 'list', 'or' ] ],
-        [ 'list', 'or' ] ] ] ],
-  [ 'stat',
-    [ 'MulOp' ],
-    [ 'alt',
-      [ 'seq',
-        [ 'call', 'Token', [ 'list', '*' ] ],
-        [ 'list', 'mul' ] ],
-      [ 'seq',
-        [ 'call', 'Token', [ 'list', '/' ] ],
-        [ 'list', 'div' ] ],
-      [ 'seq',
-        [ 'call', 'Token', [ 'list', 'and' ] ],
-        [ 'list', 'and' ] ] ] ],
-  [ 'stat',
-    [ 'Comp' ],
-    [ 'seq',
-      [ 'set', 'x', [ 'call', 'Expr' ] ],
-      [ 'star',
-        [ 'seq',
-          [ 'set', 'op', [ 'call', 'RelOp' ] ],
-          [ 'set', 'y', [ 'call', 'Expr' ] ],
-          [ 'set',
-            'x',
-            [ 'list', [ [ 'var', 'op' ], [ 'var', 'x' ], [ 'var', 'y' ] ] ] ] ] ],
-      [ 'var', 'x' ] ] ],
-  [ 'stat',
-    [ 'Expr' ],
-    [ 'alt',
-      [ 'seq',
-        [ 'call', 'Token', [ 'list', '-' ] ],
-        [ 'set', 'x', [ 'call', 'Term' ] ],
-        [ 'set', 'x', [ 'list', [ [ 'list', 'neg' ], [ 'var', 'x' ] ] ] ],
-        [ 'star',
-          [ 'seq',
-            [ 'set', 'op', [ 'call', 'AddOp' ] ],
-            [ 'set', 'y', [ 'call', 'Term' ] ],
-            [ 'set',
-              'x',
-              [ 'list', [ [ 'var', 'op' ], [ 'var', 'x' ], [ 'var', 'y' ] ] ] ] ] ],
-        [ 'var', 'x' ] ],
-      [ 'seq',
-        [ 'set', 'x', [ 'call', 'Term' ] ],
-        [ 'star',
-          [ 'seq',
-            [ 'set', 'op', [ 'call', 'AddOp' ] ],
-            [ 'set', 'y', [ 'call', 'Term' ] ],
-            [ 'set',
-              'x',
-              [ 'list', [ [ 'var', 'op' ], [ 'var', 'x' ], [ 'var', 'y' ] ] ] ] ] ],
-        [ 'var', 'x' ] ] ] ],
-  [ 'stat',
-    [ 'Term' ],
-    [ 'seq',
-      [ 'set', 'x', [ 'call', 'Factor' ] ],
-      [ 'star',
-        [ 'seq',
-          [ 'set', 'op', [ 'call', 'MulOp' ] ],
-          [ 'set', 'y', [ 'call', 'Factor' ] ],
-          [ 'set',
-            'x',
-            [ 'list', [ [ 'var', 'op' ], [ 'var', 'x' ], [ 'var', 'y' ] ] ] ] ] ],
-      [ 'var', 'x' ] ] ],
-  [ 'stat',
-    [ 'Factor' ],
-    [ 'alt',
-      [ 'call', 'Number' ],
-      [ 'seq',
-        [ 'call', 'Token', [ 'list', '(' ] ],
-        [ 'set', 'x', [ 'call', 'Comp' ] ],
-        [ 'call', 'Token', [ 'list', ')' ] ],
-        [ 'var', 'x' ] ] ] ],
-  [ 'stat',
-    [ 'ListExpr' ],
-    [ 'alt',
-      [ 'call', 'Number' ],
-      [ 'seq',
-        [ 'enterList',
-          [ 'seq',
-            [ 'enterList', [ 'matchList', 'neg' ] ],
-            [ 'set', 'x', [ 'call', 'ListExpr' ] ] ] ],
-        [ 'call', 'Neg', [ 'var', 'x' ] ] ],
-      [ 'seq',
-        [ 'enterList',
-          [ 'seq',
-            [ 'enterList', [ 'matchList', 'mul' ] ],
-            [ 'set', 'x', [ 'call', 'ListExpr' ] ],
-            [ 'set', 'y', [ 'call', 'ListExpr' ] ] ] ],
-        [ 'Mul', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
-      [ 'seq',
-        [ 'enterList',
-          [ 'seq',
-            [ 'enterList', [ 'matchList', 'div' ] ],
-            [ 'set', 'x', [ 'call', 'ListExpr' ] ],
-            [ 'set', 'y', [ 'call', 'ListExpr' ] ] ] ],
-        [ 'Div', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
-      [ 'seq',
-        [ 'enterList',
-          [ 'seq',
-            [ 'enterList', [ 'matchList', 'add' ] ],
-            [ 'set', 'x', [ 'call', 'ListExpr' ] ],
-            [ 'set', 'y', [ 'call', 'ListExpr' ] ] ] ],
-        [ 'Add', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
-      [ 'seq',
-        [ 'enterList',
-          [ 'seq',
-            [ 'enterList', [ 'matchList', 'sub' ] ],
-            [ 'set', 'x', [ 'call', 'ListExpr' ] ],
-            [ 'set', 'y', [ 'call', 'ListExpr' ] ] ] ],
-        [ 'Sub', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
-      [ 'seq',
-        [ 'enterList',
-          [ 'seq',
-            [ 'enterList', [ 'matchList', 'eq' ] ],
-            [ 'set', 'x', [ 'call', 'ListExpr' ] ],
-            [ 'set', 'y', [ 'call', 'ListExpr' ] ] ] ],
-        [ 'Eq', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
-      [ 'seq',
-        [ 'enterList',
-          [ 'seq',
-            [ 'enterList', [ 'matchList', 'ne' ] ],
-            [ 'set', 'x', [ 'call', 'ListExpr' ] ],
-            [ 'set', 'y', [ 'call', 'ListExpr' ] ] ] ],
-        [ 'Ne', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
-      [ 'seq',
-        [ 'enterList',
-          [ 'seq',
-            [ 'enterList', [ 'matchList', 'le' ] ],
-            [ 'set', 'x', [ 'call', 'ListExpr' ] ],
-            [ 'set', 'y', [ 'call', 'ListExpr' ] ] ] ],
-        [ 'Le', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
-      [ 'seq',
-        [ 'enterList',
-          [ 'seq',
-            [ 'enterList', [ 'matchList', 'ge' ] ],
-            [ 'set', 'x', [ 'call', 'ListExpr' ] ],
-            [ 'set', 'y', [ 'call', 'ListExpr' ] ] ] ],
-        [ 'Ge', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
-      [ 'seq',
-        [ 'enterList',
-          [ 'seq',
-            [ 'enterList', [ 'matchList', 'lt' ] ],
-            [ 'set', 'x', [ 'call', 'ListExpr' ] ],
-            [ 'set', 'y', [ 'call', 'ListExpr' ] ] ] ],
-        [ 'Lt', [ 'var', 'x' ], [ 'var', 'y' ] ] ],
-      [ 'seq',
-        [ 'enterList',
-          [ 'seq',
-            [ 'enterList', [ 'matchList', 'gt' ] ],
-            [ 'set', 'x', [ 'call', 'ListExpr' ] ],
-            [ 'set', 'y', [ 'call', 'ListExpr' ] ] ] ],
-        [ 'Gt', [ 'var', 'x' ], [ 'var', 'y' ] ] ] ] ] ]
+#include "../support.c"
 
-struct oneValue *oneDigit()
+struct oneValue *oneDigit(void);
+struct oneValue *oneNumber(void);
+struct oneValue *oneRelOp(void);
+struct oneValue *oneAddOp(void);
+struct oneValue *oneMulOp(void);
+struct oneValue *oneComp(void);
+struct oneValue *oneExpr(void);
+struct oneValue *oneTerm(void);
+struct oneValue *oneFactor(void);
+struct oneValue *oneListExpr(void);
+struct oneValue *oneDigit(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -200,6 +19,8 @@ struct oneValue *v3;
 struct oneValue *v4;
 struct oneValue *v5;
 struct oneValue *v6;
+struct oneValue *x;
+struct oneValue *vRes;
 do {
 x = oneChar();
 vRes = x;
@@ -216,12 +37,14 @@ vRes = x;
 } while (0);
 }
 
-struct oneValue *oneNumber()
+struct oneValue *oneNumber(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
 struct oneValue *v2;
 struct oneValue *v3;
+struct oneValue *cs;
+struct oneValue *vRes;
 do {
 v0 = oneDigit();
 if (v0 == NIL) {
@@ -242,7 +65,7 @@ vRes = oneToInt(v2);
 } while (0);
 }
 
-struct oneValue *oneRelOp()
+struct oneValue *oneRelOp(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -268,6 +91,9 @@ struct oneValue *v20;
 struct oneValue *v21;
 struct oneValue *v22;
 struct oneValue *v23;
+struct oneListNode *vn0;
+struct oneValue *vRes;
+vn0 = oneCurrentNode;
 do {
 do {
 v0 = oneNewList();
@@ -284,7 +110,7 @@ v3 = oneNewChar('q');
 oneAppend(vRes, v3);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
 v4 = oneNewList();
 v5 = oneNewChar('<');
@@ -300,7 +126,7 @@ v7 = oneNewChar('e');
 oneAppend(vRes, v7);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
 v8 = oneNewList();
 v9 = oneNewChar('<');
@@ -316,7 +142,7 @@ v11 = oneNewChar('e');
 oneAppend(vRes, v11);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
 v12 = oneNewList();
 v13 = oneNewChar('>');
@@ -332,7 +158,7 @@ v15 = oneNewChar('e');
 oneAppend(vRes, v15);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
 v16 = oneNewList();
 v17 = oneNewChar('<');
@@ -346,7 +172,7 @@ v19 = oneNewChar('t');
 oneAppend(vRes, v19);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
 v20 = oneNewList();
 v21 = oneNewChar('>');
@@ -362,7 +188,7 @@ oneAppend(vRes, v23);
 } while (0);
 }
 
-struct oneValue *oneAddOp()
+struct oneValue *oneAddOp(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -376,6 +202,9 @@ struct oneValue *v8;
 struct oneValue *v9;
 struct oneValue *v10;
 struct oneValue *v11;
+struct oneListNode *vn0;
+struct oneValue *vRes;
+vn0 = oneCurrentNode;
 do {
 do {
 v0 = oneNewList();
@@ -392,7 +221,7 @@ v3 = oneNewChar('d');
 oneAppend(vRes, v3);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
 v4 = oneNewList();
 v5 = oneNewChar('-');
@@ -408,7 +237,7 @@ v7 = oneNewChar('b');
 oneAppend(vRes, v7);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
 v8 = oneNewList();
 v9 = oneNewChar('o');
@@ -426,7 +255,7 @@ oneAppend(vRes, v11);
 } while (0);
 }
 
-struct oneValue *oneMulOp()
+struct oneValue *oneMulOp(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -440,6 +269,9 @@ struct oneValue *v8;
 struct oneValue *v9;
 struct oneValue *v10;
 struct oneValue *v11;
+struct oneListNode *vn0;
+struct oneValue *vRes;
+vn0 = oneCurrentNode;
 do {
 do {
 v0 = oneNewList();
@@ -456,7 +288,7 @@ v3 = oneNewChar('l');
 oneAppend(vRes, v3);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
 v4 = oneNewList();
 v5 = oneNewChar('/');
@@ -472,7 +304,7 @@ v7 = oneNewChar('v');
 oneAppend(vRes, v7);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
 v8 = oneNewList();
 v9 = oneNewChar('a');
@@ -494,13 +326,17 @@ oneAppend(vRes, v11);
 } while (0);
 }
 
-struct oneValue *oneComp()
+struct oneValue *oneComp(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
 struct oneValue *v2;
 struct oneValue *v3;
 struct oneValue *v4;
+struct oneValue *x;
+struct oneValue *op;
+struct oneValue *y;
+struct oneValue *vRes;
 do {
 x = oneExpr();
 vRes = x;
@@ -531,7 +367,7 @@ vRes = x;
 } while (0);
 }
 
-struct oneValue *oneExpr()
+struct oneValue *oneExpr(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -548,6 +384,12 @@ struct oneValue *v11;
 struct oneValue *v12;
 struct oneValue *v13;
 struct oneValue *v14;
+struct oneListNode *vn0;
+struct oneValue *x;
+struct oneValue *op;
+struct oneValue *y;
+struct oneValue *vRes;
+vn0 = oneCurrentNode;
 do {
 do {
 v0 = oneNewList();
@@ -596,7 +438,7 @@ if (vRes == NIL) { break; }
 vRes = x;
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
 x = oneTerm();
 vRes = x;
@@ -628,13 +470,17 @@ vRes = x;
 } while (0);
 }
 
-struct oneValue *oneTerm()
+struct oneValue *oneTerm(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
 struct oneValue *v2;
 struct oneValue *v3;
 struct oneValue *v4;
+struct oneValue *x;
+struct oneValue *op;
+struct oneValue *y;
+struct oneValue *vRes;
 do {
 x = oneFactor();
 vRes = x;
@@ -665,7 +511,7 @@ vRes = x;
 } while (0);
 }
 
-struct oneValue *oneFactor()
+struct oneValue *oneFactor(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -675,10 +521,14 @@ struct oneValue *v4;
 struct oneValue *v5;
 struct oneValue *v6;
 struct oneValue *v7;
+struct oneListNode *vn0;
+struct oneValue *x;
+struct oneValue *vRes;
+vn0 = oneCurrentNode;
 do {
 vRes = oneNumber();
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
 v1 = oneNewList();
 v2 = oneNewChar('(');
@@ -698,7 +548,7 @@ vRes = x;
 } while (0);
 }
 
-struct oneValue *oneListExpr()
+struct oneValue *oneListExpr(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
@@ -744,33 +594,110 @@ struct oneValue *v40;
 struct oneValue *v41;
 struct oneValue *v42;
 struct oneValue *v43;
+struct oneValue *v44;
+struct oneValue *v45;
+struct oneValue *v46;
+struct oneValue *v47;
+struct oneValue *v48;
+struct oneValue *v49;
+struct oneValue *v50;
+struct oneValue *v51;
+struct oneValue *v52;
+struct oneValue *v53;
+struct oneValue *v54;
+struct oneValue *v55;
+struct oneValue *v56;
+struct oneValue *v57;
+struct oneValue *v58;
+struct oneValue *v59;
+struct oneValue *v60;
+struct oneValue *v61;
+struct oneValue *v62;
+struct oneValue *v63;
+struct oneValue *v64;
+struct oneValue *v65;
+struct oneListNode *vn0;
+struct oneListNode *vn1;
+struct oneListNode *vn2;
+struct oneListNode *vn3;
+struct oneListNode *vn4;
+struct oneListNode *vn5;
+struct oneListNode *vn6;
+struct oneListNode *vn7;
+struct oneListNode *vn8;
+struct oneListNode *vn9;
+struct oneListNode *vn10;
+struct oneListNode *vn11;
+struct oneListNode *vn12;
+struct oneListNode *vn13;
+struct oneListNode *vn14;
+struct oneListNode *vn15;
+struct oneListNode *vn16;
+struct oneListNode *vn17;
+struct oneListNode *vn18;
+struct oneListNode *vn19;
+struct oneListNode *vn20;
+struct oneListNode *vn21;
+struct oneListNode *vn22;
+struct oneValue *x;
+struct oneValue *y;
+struct oneValue *vRes;
+vn0 = oneCurrentNode;
 do {
 vRes = oneNumber();
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
-oneEnterList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v1 = oneInput;
+vn1 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
 do {
-oneEnterList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v2 = oneInput;
+vn2 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("neg");
-oneLeaveList();
+oneInput = v2;
+oneCurrentNode = vn2;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
 x = oneListExpr();
 vRes = x;
 } while (0);
-oneLeaveList();
+oneInput = v1;
+oneCurrentNode = vn1;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
-v2 = x;
-vRes = oneNeg(v2);
+v4 = x;
+vRes = oneNeg(v4);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
-oneEnterList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v6 = oneInput;
+vn3 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
 do {
-oneEnterList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v7 = oneInput;
+vn4 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("mul");
-oneLeaveList();
+oneInput = v7;
+oneCurrentNode = vn4;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
 x = oneListExpr();
 vRes = x;
@@ -778,41 +705,73 @@ if (vRes == NIL) { break; }
 y = oneListExpr();
 vRes = y;
 } while (0);
-oneLeaveList();
-if (vRes == NIL) { break; }
-v6 = x;
-v7 = y;
-vRes = oneMul(v6, v7);
-} while (0);
-if (vRes != NIL) { break; }
-oneBacktrack();
-do {
-oneEnterList();
-do {
-oneEnterList();
-vRes = oneMatchString("div");
-oneLeaveList();
-if (vRes == NIL) { break; }
-x = oneListExpr();
-vRes = x;
-if (vRes == NIL) { break; }
-y = oneListExpr();
-vRes = y;
-} while (0);
-oneLeaveList();
+oneInput = v6;
+oneCurrentNode = vn3;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
 v10 = x;
 v11 = y;
-vRes = oneDiv(v10, v11);
+vRes = oneMul(v10, v11);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
-oneEnterList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v12 = oneInput;
+vn5 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
 do {
-oneEnterList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v13 = oneInput;
+vn6 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
+vRes = oneMatchString("div");
+oneInput = v13;
+oneCurrentNode = vn6;
+} else {
+vRes = NIL;
+}
+if (vRes == NIL) { break; }
+x = oneListExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = oneListExpr();
+vRes = y;
+} while (0);
+oneInput = v12;
+oneCurrentNode = vn5;
+} else {
+vRes = NIL;
+}
+if (vRes == NIL) { break; }
+v16 = x;
+v17 = y;
+vRes = oneDiv(v16, v17);
+} while (0);
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+do {
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v18 = oneInput;
+vn7 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
+do {
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v19 = oneInput;
+vn8 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("add");
-oneLeaveList();
+oneInput = v19;
+oneCurrentNode = vn8;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
 x = oneListExpr();
 vRes = x;
@@ -820,62 +779,36 @@ if (vRes == NIL) { break; }
 y = oneListExpr();
 vRes = y;
 } while (0);
-oneLeaveList();
-if (vRes == NIL) { break; }
-v14 = x;
-v15 = y;
-vRes = oneAdd(v14, v15);
-} while (0);
-if (vRes != NIL) { break; }
-oneBacktrack();
-do {
-oneEnterList();
-do {
-oneEnterList();
-vRes = oneMatchString("sub");
-oneLeaveList();
-if (vRes == NIL) { break; }
-x = oneListExpr();
-vRes = x;
-if (vRes == NIL) { break; }
-y = oneListExpr();
-vRes = y;
-} while (0);
-oneLeaveList();
-if (vRes == NIL) { break; }
-v18 = x;
-v19 = y;
-vRes = oneSub(v18, v19);
-} while (0);
-if (vRes != NIL) { break; }
-oneBacktrack();
-do {
-oneEnterList();
-do {
-oneEnterList();
-vRes = oneMatchString("eq");
-oneLeaveList();
-if (vRes == NIL) { break; }
-x = oneListExpr();
-vRes = x;
-if (vRes == NIL) { break; }
-y = oneListExpr();
-vRes = y;
-} while (0);
-oneLeaveList();
+oneInput = v18;
+oneCurrentNode = vn7;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
 v22 = x;
 v23 = y;
-vRes = oneEq(v22, v23);
+vRes = oneAdd(v22, v23);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
-oneEnterList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v24 = oneInput;
+vn9 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
 do {
-oneEnterList();
-vRes = oneMatchString("ne");
-oneLeaveList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v25 = oneInput;
+vn10 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
+vRes = oneMatchString("sub");
+oneInput = v25;
+oneCurrentNode = vn10;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
 x = oneListExpr();
 vRes = x;
@@ -883,20 +816,36 @@ if (vRes == NIL) { break; }
 y = oneListExpr();
 vRes = y;
 } while (0);
-oneLeaveList();
+oneInput = v24;
+oneCurrentNode = vn9;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
-v26 = x;
-v27 = y;
-vRes = oneNe(v26, v27);
+v28 = x;
+v29 = y;
+vRes = oneSub(v28, v29);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
-oneEnterList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v30 = oneInput;
+vn11 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
 do {
-oneEnterList();
-vRes = oneMatchString("le");
-oneLeaveList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v31 = oneInput;
+vn12 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
+vRes = oneMatchString("eq");
+oneInput = v31;
+oneCurrentNode = vn12;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
 x = oneListExpr();
 vRes = x;
@@ -904,41 +853,147 @@ if (vRes == NIL) { break; }
 y = oneListExpr();
 vRes = y;
 } while (0);
-oneLeaveList();
-if (vRes == NIL) { break; }
-v30 = x;
-v31 = y;
-vRes = oneLe(v30, v31);
-} while (0);
-if (vRes != NIL) { break; }
-oneBacktrack();
-do {
-oneEnterList();
-do {
-oneEnterList();
-vRes = oneMatchString("ge");
-oneLeaveList();
-if (vRes == NIL) { break; }
-x = oneListExpr();
-vRes = x;
-if (vRes == NIL) { break; }
-y = oneListExpr();
-vRes = y;
-} while (0);
-oneLeaveList();
+oneInput = v30;
+oneCurrentNode = vn11;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
 v34 = x;
 v35 = y;
-vRes = oneGe(v34, v35);
+vRes = oneEq(v34, v35);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
-oneEnterList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v36 = oneInput;
+vn13 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
 do {
-oneEnterList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v37 = oneInput;
+vn14 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
+vRes = oneMatchString("ne");
+oneInput = v37;
+oneCurrentNode = vn14;
+} else {
+vRes = NIL;
+}
+if (vRes == NIL) { break; }
+x = oneListExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = oneListExpr();
+vRes = y;
+} while (0);
+oneInput = v36;
+oneCurrentNode = vn13;
+} else {
+vRes = NIL;
+}
+if (vRes == NIL) { break; }
+v40 = x;
+v41 = y;
+vRes = oneNe(v40, v41);
+} while (0);
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+do {
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v42 = oneInput;
+vn15 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
+do {
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v43 = oneInput;
+vn16 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
+vRes = oneMatchString("le");
+oneInput = v43;
+oneCurrentNode = vn16;
+} else {
+vRes = NIL;
+}
+if (vRes == NIL) { break; }
+x = oneListExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = oneListExpr();
+vRes = y;
+} while (0);
+oneInput = v42;
+oneCurrentNode = vn15;
+} else {
+vRes = NIL;
+}
+if (vRes == NIL) { break; }
+v46 = x;
+v47 = y;
+vRes = oneLe(v46, v47);
+} while (0);
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+do {
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v48 = oneInput;
+vn17 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
+do {
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v49 = oneInput;
+vn18 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
+vRes = oneMatchString("ge");
+oneInput = v49;
+oneCurrentNode = vn18;
+} else {
+vRes = NIL;
+}
+if (vRes == NIL) { break; }
+x = oneListExpr();
+vRes = x;
+if (vRes == NIL) { break; }
+y = oneListExpr();
+vRes = y;
+} while (0);
+oneInput = v48;
+oneCurrentNode = vn17;
+} else {
+vRes = NIL;
+}
+if (vRes == NIL) { break; }
+v52 = x;
+v53 = y;
+vRes = oneGe(v52, v53);
+} while (0);
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+do {
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v54 = oneInput;
+vn19 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
+do {
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v55 = oneInput;
+vn20 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("lt");
-oneLeaveList();
+oneInput = v55;
+oneCurrentNode = vn20;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
 x = oneListExpr();
 vRes = x;
@@ -946,20 +1001,36 @@ if (vRes == NIL) { break; }
 y = oneListExpr();
 vRes = y;
 } while (0);
-oneLeaveList();
+oneInput = v54;
+oneCurrentNode = vn19;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
-v38 = x;
-v39 = y;
-vRes = oneLt(v38, v39);
+v58 = x;
+v59 = y;
+vRes = oneLt(v58, v59);
 } while (0);
 if (vRes != NIL) { break; }
-oneBacktrack();
+oneCurrentNode = vn0;
 do {
-oneEnterList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v60 = oneInput;
+vn21 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
 do {
-oneEnterList();
+if (oneCurrentNode->value->tag == TAG_LIST) {
+v61 = oneInput;
+vn22 = oneCurrentNode;
+oneInput = oneCurrentNode->value;
+oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("gt");
-oneLeaveList();
+oneInput = v61;
+oneCurrentNode = vn22;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
 x = oneListExpr();
 vRes = x;
@@ -967,11 +1038,15 @@ if (vRes == NIL) { break; }
 y = oneListExpr();
 vRes = y;
 } while (0);
-oneLeaveList();
+oneInput = v60;
+oneCurrentNode = vn21;
+} else {
+vRes = NIL;
+}
 if (vRes == NIL) { break; }
-v42 = x;
-v43 = y;
-vRes = oneGt(v42, v43);
+v64 = x;
+v65 = y;
+vRes = oneGt(v64, v65);
 } while (0);
 } while (0);
 }

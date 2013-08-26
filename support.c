@@ -87,18 +87,11 @@ struct oneValue *oneMatchChar(char c)
 {
     struct oneValue *result;
 
-    if (oneCurrentNode->value == NIL) {
-        return NIL;
-    }
-    if (oneCurrentNode->value->tag != TAG_CHAR) {
-        return NIL;
-    }
-    if (oneCurrentNode->value->charValue != c) {
+    result = oneChar();
+    if (result->charValue != c) {
         return NIL;
     }
 
-    result = oneCurrentNode->value;
-    oneCurrentNode = oneCurrentNode->next;
     return result;
 }
 
@@ -148,8 +141,139 @@ struct oneValue *oneMatchString(char *s)
     return result;
 }
 
+struct oneValue *oneChar(void)
+{
+    struct oneValue *result;
+
+    if (oneCurrentNode->value == NIL) {
+        return NIL;
+    }
+    if (oneCurrentNode->value->tag != TAG_CHAR) {
+        return NIL;
+    }
+
+    result = oneCurrentNode->value;
+    oneCurrentNode = oneCurrentNode->next;
+    return result;
+}
+
+// incomplete, only parses first digit, assumes ASCII
+
+struct oneValue *oneToInt(struct oneValue *s)
+{
+    char c;
+
+    if (value == NIL) {
+        return NIL;
+    }
+    if (value->tag != TAG_LIST) {
+        return NIL;
+    }
+    if (value->listValueFirst == NIL) {
+        return NIL;
+    }
+    if (value->listValueFirst->value->tag != TAG_CHAR) {
+        return NIL;
+    }
+    c = value->listValueFirst->value->charValue;
+    if (c < '0' || c > '9') {
+        return NIL;
+    }
+
+    return c - '0';
+}
+
+// TODO change this to take C strings
+
+struct oneValue *oneToken(struct oneValue *token)
+{
+    return NIL;
+}
+
+struct oneValue *oneNeg(struct oneValue *x)
+{
+    return NIL;
+}
+
+
+struct oneValue *oneMul(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneDiv(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneMod(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneAdd(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneSub(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneConcat(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneEq(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneNe(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneLt(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneGt(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneLe(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneGe(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneAnd(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+struct oneValue *oneOr(struct oneValue *x, struct oneValue *y)
+{
+    return NIL;
+}
+
+// stuff to support calculator example
+
+struct oneValue *oneComp(void);
+struct oneValue *oneListExpr(void);
+
 int main(int argc, char **argv)
 {
+    /*
     // just a bunch of test cases
 
     struct oneValue *testChar;
@@ -185,4 +309,5 @@ int main(int argc, char **argv)
     onePrint(testList2);
     printf("\n");
     return 0;
+    */
 }

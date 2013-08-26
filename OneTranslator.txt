@@ -14,7 +14,7 @@ ometa OneTranslator {
                  -> (dest + " = oneNewInt(" + x.toString() + ");\n")
 
                | [ 'list' [ genVar(0):v expr(v)*:xs ] ]
-                 ( -> (xs.concat([""])) ):xs
+                 ( -> (xs.concat([""])) ):xs // append empty string
                  -> (dest + " = oneNewList();\n" +
                      xs.join("oneAppend(" + dest + ", " + v + ");\n"))
 
@@ -48,10 +48,22 @@ ometa OneTranslator {
                | [ 'match' number:x ]
                  -> (dest + " = oneMatchInt(" + x.toString() + ");\n")
 
-               // TODO enterList
-
-               | [ 'enterList' expr(dest):x ]
-                 -> (x)
+               | [ 'enterList'
+                   genVar(0):input
+                   genNodeVar(0):node
+                   expr(dest):x
+                 ]
+                 -> ("if (oneCurrentNode->value->tag == TAG_LIST) {\n" +
+                     input + " = oneInput;\n" +
+                     node + " = oneCurrentNode;\n" +
+                     "oneInput = oneCurrentNode->value;\n" +
+                     "oneCurrentNode = oneInput->listValueFirst;\n" +
+                     x +
+                     "oneInput = " + input + ";\n" +
+                     "oneCurrentNode = " + node + ";\n" +
+                     "} else {\n" +
+                     dest + " = NIL;\n" +
+                     "}\n")
 
                | [ 'matchList' [ char*:xs ] ]
                  emitString(xs.join("")):s
@@ -63,6 +75,7 @@ ometa OneTranslator {
 
                | [ 'set' [ char*:xs ]
                    ( -> (xs.join("")) ):v
+                   addVar(v)
                    expr(v):x ]
                  -> (x +
                      dest + " = " + v + ";\n")
@@ -104,28 +117,38 @@ ometa OneTranslator {
                      xs.join("if (" + dest + " == NIL) { break; }\n") +
                      "} while (0);\n")
 
-               // TODO backtracking
-
-               | [ 'alt' expr(dest)*:xs ]
-                 -> ("do {\n" +
-                     xs.join("if (" + dest + " != NIL) { break; }\n") +
+               | [ 'alt' genNodeVar(0):node expr(dest)*:xs ]
+                 -> (node + " = oneCurrentNode;\n" +
+                     "do {\n" +
+                     xs.join("if (" + dest + " != NIL) { break; }\n" +
+                             "oneCurrentNode = " + node + ";\n") +
                      "} while (0);\n"),
 
     statement = [ 'stat' [ string:name string*:args ] expr("vRes"):x ]
-                -> ("struct oneValue *one" + name +
-                    "(" + this.defineArgs(args) + ")\n" +
+                ( -> ("struct oneValue *one" + name +
+                      "(" + this.defineArgs(args) + ")") ):proto
+                addProto(proto)
+                -> (proto + "\n" +
                     "{\n" +
                     this.defineVars() +
                     x +
                     "}\n"),
 
-    program = [ (resetCounter(0) statement)*:s ] -> s.join("\n")
+    program = [ (reset(0) statement)*:s ]
+              -> ("#include \"../support.c\"\n" +
+                  "\n" +
+                  this.protos +
+                  s.join("\n"))
 }
 
-// resetCounter takes a dummy argument to prevent memoization
-OneTranslator.resetCounter = function() {
+OneTranslator.protos = "";
+
+// reset takes a dummy argument to prevent memoization
+OneTranslator.reset = function() {
     this.apply("anything");
     this.counter = 0;
+    this.nodeCounter = 0;
+    this.vars = [];
 };
 
 // genVar takes a dummy argument to prevent memoization
@@ -137,6 +160,22 @@ OneTranslator.genVar = function() {
     return r;
 };
 
+// genNodeVar takes a dummy argument to prevent memoization
+OneTranslator.genNodeVar = function() {
+    var r;
+    this.apply("anything");
+    r = "vn" + this.nodeCounter.toString();
+    this.nodeCounter = this.nodeCounter + 1;
+    return r;
+};
+
+OneTranslator.addVar = function() {
+    var name = this.apply("string");
+    if (this.vars.indexOf(name) === -1) {
+        this.vars.push(name);
+    }
+};
+
 OneTranslator.defineVars = function() {
     var i;
     var s = "";
@@ -144,22 +183,36 @@ OneTranslator.defineVars = function() {
     for (i = 0; i < this.counter; i++) {
         s = s + "struct oneValue *" + "v" + i.toString() + ";\n";
     }
+    for (i = 0; i < this.nodeCounter; i++) {
+        s = s + "struct oneListNode *" + "vn" + i.toString() + ";\n";
+    }
+    for (i = 0; i < this.vars.length; i++) {
+        s = s + "struct oneValue *" + this.vars[i] + ";\n";
+    }
+    s = s + "struct oneValue *vRes;\n";
     return s;
 };
 
 OneTranslator.defineArgs = function(args) {
     var i;
-    var s = "";
-    
+    var s;
+
     if (args.length > 0) {
         s = "struct oneValue *" + args[0];
 
         for (i = 1; i < args.length; i++) {
             s = s + ", struct oneValue *" + args[i];
         }
+    } else {
+        s = "void";
     }
 
     return s;
+};
+
+OneTranslator.addProto = function() {
+    var proto = this.apply("string") + ";";
+    this.protos = this.protos + proto + "\n";
 };
 
 OneTranslator.emitChar = function(c) {

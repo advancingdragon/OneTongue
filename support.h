@@ -35,6 +35,12 @@ struct oneValue *oneMatchChar(char c);
 struct oneValue *oneMatchInt(int i);
 struct oneValue *oneMatchString(char *s);
 
+struct oneValue *oneChar(void);
+struct oneValue *oneToInt(struct oneValue *s);
+struct oneValue *oneToken(struct oneValue *token);
+
+struct oneValue *oneNeg(struct oneValue *x);
+
 struct oneValue *oneMul(struct oneValue *x, struct oneValue *y);
 struct oneValue *oneDiv(struct oneValue *x, struct oneValue *y);
 struct oneValue *oneMod(struct oneValue *x, struct oneValue *y);
