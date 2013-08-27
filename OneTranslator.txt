@@ -13,10 +13,11 @@ ometa OneTranslator {
                | number:x
                  -> (dest + " = oneNewInt(" + x.toString() + ");\n")
 
-               | [ 'list' [ genVar(0):v expr(v)*:xs ] ]
+               | [ 'list' [ genVar(0):t genVar(0):v expr(v)*:xs ] ]
                  ( -> (xs.concat([""])) ):xs // append empty string
-                 -> (dest + " = oneNewList();\n" +
-                     xs.join("oneAppend(" + dest + ", " + v + ");\n"))
+                 -> (t + " = oneNewList();\n" +
+                     xs.join("oneAppend(" + t + ", " + v + ");\n") +
+                     dest + " = " + t + ";\n")
 
                | [ 'var' string:n ]
                  -> (dest + " = " + n + ";\n")
@@ -69,6 +70,10 @@ ometa OneTranslator {
                  emitString(xs.join("")):s
                  -> (dest + " = oneMatchString(" + s + ");\n")
 
+               | [ 'token' [ char*:xs ] ]
+                 emitString(xs.join("")):s
+                 -> (dest + " = oneToken(" + s + ");\n")
+
                | [ 'not' genVar(0):v expr(v):x ]
                  -> (x +
                      dest + " = !" + v + ";\n")
@@ -86,7 +91,7 @@ ometa OneTranslator {
                      x +
                      "if (" + v + " == NIL) { break; }\n" +
                      "oneAppend(" + dest + ", " + v + ");\n" +
-                     "} while (0);\n")
+                     "} while (1);\n")
 
                | [ 'plus' genVar(0):v expr(v):x ]
                  -> (x +
@@ -99,7 +104,7 @@ ometa OneTranslator {
                      x +
                      "if (" + v + " == NIL) { break; }\n" +
                      "oneAppend(" + dest + ", " + v + ");\n" +
-                     "} while (0);\n" +
+                     "} while (1);\n" +
                      "}\n")
 
                | [ 'opt' genVar(0):v expr(v):x ]
@@ -132,10 +137,12 @@ ometa OneTranslator {
                     "{\n" +
                     this.defineVars() +
                     x +
+                    "return vRes;\n" +
                     "}\n"),
 
     program = [ (reset(0) statement)*:s ]
-              -> ("#include \"../support.c\"\n" +
+              -> ("#include \"../support.h\"\n" +
+                  "#include <stdlib.h>\n" +
                   "\n" +
                   this.protos +
                   s.join("\n"))

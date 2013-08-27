@@ -34,10 +34,10 @@ void onePrint(struct oneValue *value);
 struct oneValue *oneMatchChar(char c);
 struct oneValue *oneMatchInt(int i);
 struct oneValue *oneMatchString(char *s);
+struct oneValue *oneToken(char *s);
 
 struct oneValue *oneChar(void);
 struct oneValue *oneToInt(struct oneValue *s);
-struct oneValue *oneToken(struct oneValue *token);
 
 struct oneValue *oneNeg(struct oneValue *x);
 

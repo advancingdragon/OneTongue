@@ -22,16 +22,16 @@ ometa OneTongue {
     name = spaces letter:c letterOrDigit*:cs
            -> (c + cs.join("")),
 
-    character = "$" char:c ?(c.charCodeAt(0) > 32)
+    character = spaces '$' char:c ?(c.charCodeAt(0) > 32)
                 -> c,
 
     number = spaces digit+:cs
              -> (parseInt(cs.join(""))),
 
-    doubleQuote = "\"" (~"\"" char)*:cs "\""
+    doubleQuote = spaces '"' (~'"' char)*:cs '"'
                   -> (cs.join("")),
 
-    singleQuote = "'" (~"'" char)*:cs "'"
+    singleQuote = spaces '\'' (~'\'' char)*:cs '\''
                   -> (cs.join("")),
 
     oper :p = ?(p === 0) ( "||" -> "Or" )
@@ -72,7 +72,7 @@ ometa OneTongue {
           | name:n              -> ["call", n]
           | number:x            -> ["match", x]
           | doubleQuote:xs      -> ["matchList", xs]
-          | "#" doubleQuote:xs  -> ["call", "Token", ["list", xs]]
+          | "#" doubleQuote:xs  -> ["token", xs]
           | "{" expr:x "}"      -> ["enterList", x]
           | singleQuote:xs      -> ["enterList", ["matchList", xs]]
           | "~" expr5:x         -> ["not", x]

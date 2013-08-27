@@ -100,6 +100,9 @@ struct oneValue *oneMatchInt(int i)
 {
     struct oneValue *result;
 
+    if (oneCurrentNode == NIL) {
+        return NIL;
+    }
     if (oneCurrentNode->value == NIL) {
         return NIL;
     }
@@ -125,6 +128,9 @@ struct oneValue *oneMatchString(char *s)
     result = oneNewList();
 
     for (i = 0; s[i] != '\0'; i++) {
+        if (oneCurrentNode == NIL) {
+            return NIL;
+        }
         if (oneCurrentNode->value == NIL) {
             return NIL;
         }
@@ -141,10 +147,21 @@ struct oneValue *oneMatchString(char *s)
     return result;
 }
 
+struct oneValue *oneToken(char *s)
+{
+    while (oneMatchString(" ") != NIL) {
+    }
+
+    return oneMatchString(s);
+}
+
 struct oneValue *oneChar(void)
 {
     struct oneValue *result;
 
+    if (oneCurrentNode == NIL) {
+        return NIL;
+    }
     if (oneCurrentNode->value == NIL) {
         return NIL;
     }
@@ -163,31 +180,27 @@ struct oneValue *oneToInt(struct oneValue *s)
 {
     char c;
 
-    if (value == NIL) {
+    if (s == NIL) {
         return NIL;
     }
-    if (value->tag != TAG_LIST) {
+    if (s->tag != TAG_LIST) {
         return NIL;
     }
-    if (value->listValueFirst == NIL) {
+    if (s->listValueFirst == NIL) {
         return NIL;
     }
-    if (value->listValueFirst->value->tag != TAG_CHAR) {
+    if (s->listValueFirst->value == NIL) {
         return NIL;
     }
-    c = value->listValueFirst->value->charValue;
+    if (s->listValueFirst->value->tag != TAG_CHAR) {
+        return NIL;
+    }
+    c = s->listValueFirst->value->charValue;
     if (c < '0' || c > '9') {
         return NIL;
     }
 
-    return c - '0';
-}
-
-// TODO change this to take C strings
-
-struct oneValue *oneToken(struct oneValue *token)
-{
-    return NIL;
+    return oneNewInt(c - '0');
 }
 
 struct oneValue *oneNeg(struct oneValue *x)
@@ -273,6 +286,23 @@ struct oneValue *oneListExpr(void);
 
 int main(int argc, char **argv)
 {
+    struct oneValue *string;
+    struct oneValue *tree;
+    int c;
+
+    string = oneNewList();
+
+    while ((c = getchar()) != '\n') {
+        oneAppend(string, oneNewChar(c));
+    }
+
+    oneInput = string;
+    oneCurrentNode = string->listValueFirst;
+
+    tree = oneComp();
+
+    onePrint(tree);
+
     /*
     // just a bunch of test cases
 

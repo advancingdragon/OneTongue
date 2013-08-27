@@ -1,6 +1,6 @@
-Digit = Char:x !x >= $0 && x <= $9 !x;
+Digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
 
-Number = Digit+:cs !ToInt[cs];
+Number = Digit+:cs !cs;
 
 RelOp = #"==" !"eq"
       | #"<>" !"ne"
@@ -19,12 +19,11 @@ MulOp = #"*"   !"mul"
 
 Comp = Expr:x ( RelOp:op Expr:y !{op x y}:x )* !x;
 
-Expr = #"-" Term:x !{"neg" x}:x ( AddOp:op Term:y !{op x y}:x )* !x
-     |      Term:x              ( AddOp:op Term:y !{op x y}:x )* !x;
+Expr = Term:x ( AddOp:op Term:y !{op x y}:x )* !x;
 
 Term = Factor:x ( MulOp:op Factor:y !{op x y}:x )* !x;
 
-Factor = Number
+Factor = " "* Number
        | #"(" Comp:x #")" !x;
 
 ListExpr = Number

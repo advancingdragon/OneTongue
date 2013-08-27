@@ -1,4 +1,5 @@
-#include "../support.c"
+#include "../support.h"
+#include <stdlib.h>
 
 struct oneValue *oneDigit(void);
 struct oneValue *oneNumber(void);
@@ -12,37 +13,46 @@ struct oneValue *oneFactor(void);
 struct oneValue *oneListExpr(void);
 struct oneValue *oneDigit(void)
 {
-struct oneValue *v0;
-struct oneValue *v1;
-struct oneValue *v2;
-struct oneValue *v3;
-struct oneValue *v4;
-struct oneValue *v5;
-struct oneValue *v6;
-struct oneValue *x;
+struct oneListNode *vn0;
 struct oneValue *vRes;
+vn0 = oneCurrentNode;
 do {
-x = oneChar();
-vRes = x;
-if (vRes == NIL) { break; }
-v2 = x;
-v3 = oneNewChar('0');
-v1 = oneGe(v2, v3);
-v5 = x;
-v6 = oneNewChar('9');
-v4 = oneLe(v5, v6);
-vRes = oneAnd(v1, v4);
-if (vRes == NIL) { break; }
-vRes = x;
+vRes = oneMatchString("0");
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+vRes = oneMatchString("1");
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+vRes = oneMatchString("2");
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+vRes = oneMatchString("3");
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+vRes = oneMatchString("4");
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+vRes = oneMatchString("5");
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+vRes = oneMatchString("6");
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+vRes = oneMatchString("7");
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+vRes = oneMatchString("8");
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+vRes = oneMatchString("9");
 } while (0);
+return vRes;
 }
 
 struct oneValue *oneNumber(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
-struct oneValue *v2;
-struct oneValue *v3;
 struct oneValue *cs;
 struct oneValue *vRes;
 do {
@@ -56,13 +66,13 @@ do {
 v0 = oneDigit();
 if (v0 == NIL) { break; }
 oneAppend(cs, v0);
-} while (0);
+} while (1);
 }
 vRes = cs;
 if (vRes == NIL) { break; }
-v2 = cs;
-vRes = oneToInt(v2);
+vRes = cs;
 } while (0);
+return vRes;
 }
 
 struct oneValue *oneRelOp(void)
@@ -79,113 +89,82 @@ struct oneValue *v8;
 struct oneValue *v9;
 struct oneValue *v10;
 struct oneValue *v11;
-struct oneValue *v12;
-struct oneValue *v13;
-struct oneValue *v14;
-struct oneValue *v15;
-struct oneValue *v16;
-struct oneValue *v17;
-struct oneValue *v18;
-struct oneValue *v19;
-struct oneValue *v20;
-struct oneValue *v21;
-struct oneValue *v22;
-struct oneValue *v23;
 struct oneListNode *vn0;
 struct oneValue *vRes;
 vn0 = oneCurrentNode;
 do {
 do {
+vRes = oneToken("==");
+if (vRes == NIL) { break; }
 v0 = oneNewList();
-v1 = oneNewChar('=');
+v1 = oneNewChar('e');
 oneAppend(v0, v1);
-v1 = oneNewChar('=');
+v1 = oneNewChar('q');
 oneAppend(v0, v1);
-vRes = oneToken(v0);
+vRes = v0;
+} while (0);
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+do {
+vRes = oneToken("<>");
 if (vRes == NIL) { break; }
-vRes = oneNewList();
+v2 = oneNewList();
+v3 = oneNewChar('n');
+oneAppend(v2, v3);
 v3 = oneNewChar('e');
-oneAppend(vRes, v3);
-v3 = oneNewChar('q');
-oneAppend(vRes, v3);
+oneAppend(v2, v3);
+vRes = v2;
 } while (0);
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
 do {
+vRes = oneToken("<=");
+if (vRes == NIL) { break; }
 v4 = oneNewList();
-v5 = oneNewChar('<');
+v5 = oneNewChar('l');
 oneAppend(v4, v5);
-v5 = oneNewChar('>');
+v5 = oneNewChar('e');
 oneAppend(v4, v5);
-vRes = oneToken(v4);
+vRes = v4;
+} while (0);
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+do {
+vRes = oneToken(">=");
 if (vRes == NIL) { break; }
-vRes = oneNewList();
-v7 = oneNewChar('n');
-oneAppend(vRes, v7);
+v6 = oneNewList();
+v7 = oneNewChar('g');
+oneAppend(v6, v7);
 v7 = oneNewChar('e');
-oneAppend(vRes, v7);
+oneAppend(v6, v7);
+vRes = v6;
 } while (0);
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
 do {
+vRes = oneToken("<");
+if (vRes == NIL) { break; }
 v8 = oneNewList();
-v9 = oneNewChar('<');
+v9 = oneNewChar('l');
 oneAppend(v8, v9);
-v9 = oneNewChar('=');
+v9 = oneNewChar('t');
 oneAppend(v8, v9);
-vRes = oneToken(v8);
-if (vRes == NIL) { break; }
-vRes = oneNewList();
-v11 = oneNewChar('l');
-oneAppend(vRes, v11);
-v11 = oneNewChar('e');
-oneAppend(vRes, v11);
+vRes = v8;
 } while (0);
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
 do {
-v12 = oneNewList();
-v13 = oneNewChar('>');
-oneAppend(v12, v13);
-v13 = oneNewChar('=');
-oneAppend(v12, v13);
-vRes = oneToken(v12);
+vRes = oneToken(">");
 if (vRes == NIL) { break; }
-vRes = oneNewList();
-v15 = oneNewChar('g');
-oneAppend(vRes, v15);
-v15 = oneNewChar('e');
-oneAppend(vRes, v15);
-} while (0);
-if (vRes != NIL) { break; }
-oneCurrentNode = vn0;
-do {
-v16 = oneNewList();
-v17 = oneNewChar('<');
-oneAppend(v16, v17);
-vRes = oneToken(v16);
-if (vRes == NIL) { break; }
-vRes = oneNewList();
-v19 = oneNewChar('l');
-oneAppend(vRes, v19);
-v19 = oneNewChar('t');
-oneAppend(vRes, v19);
-} while (0);
-if (vRes != NIL) { break; }
-oneCurrentNode = vn0;
-do {
-v20 = oneNewList();
-v21 = oneNewChar('>');
-oneAppend(v20, v21);
-vRes = oneToken(v20);
-if (vRes == NIL) { break; }
-vRes = oneNewList();
-v23 = oneNewChar('g');
-oneAppend(vRes, v23);
-v23 = oneNewChar('t');
-oneAppend(vRes, v23);
+v10 = oneNewList();
+v11 = oneNewChar('g');
+oneAppend(v10, v11);
+v11 = oneNewChar('t');
+oneAppend(v10, v11);
+vRes = v10;
 } while (0);
 } while (0);
+return vRes;
 }
 
 struct oneValue *oneAddOp(void)
@@ -196,63 +175,50 @@ struct oneValue *v2;
 struct oneValue *v3;
 struct oneValue *v4;
 struct oneValue *v5;
-struct oneValue *v6;
-struct oneValue *v7;
-struct oneValue *v8;
-struct oneValue *v9;
-struct oneValue *v10;
-struct oneValue *v11;
 struct oneListNode *vn0;
 struct oneValue *vRes;
 vn0 = oneCurrentNode;
 do {
 do {
+vRes = oneToken("+");
+if (vRes == NIL) { break; }
 v0 = oneNewList();
-v1 = oneNewChar('+');
+v1 = oneNewChar('a');
 oneAppend(v0, v1);
-vRes = oneToken(v0);
-if (vRes == NIL) { break; }
-vRes = oneNewList();
-v3 = oneNewChar('a');
-oneAppend(vRes, v3);
-v3 = oneNewChar('d');
-oneAppend(vRes, v3);
-v3 = oneNewChar('d');
-oneAppend(vRes, v3);
+v1 = oneNewChar('d');
+oneAppend(v0, v1);
+v1 = oneNewChar('d');
+oneAppend(v0, v1);
+vRes = v0;
 } while (0);
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
 do {
+vRes = oneToken("-");
+if (vRes == NIL) { break; }
+v2 = oneNewList();
+v3 = oneNewChar('s');
+oneAppend(v2, v3);
+v3 = oneNewChar('u');
+oneAppend(v2, v3);
+v3 = oneNewChar('b');
+oneAppend(v2, v3);
+vRes = v2;
+} while (0);
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+do {
+vRes = oneToken("or");
+if (vRes == NIL) { break; }
 v4 = oneNewList();
-v5 = oneNewChar('-');
+v5 = oneNewChar('o');
 oneAppend(v4, v5);
-vRes = oneToken(v4);
-if (vRes == NIL) { break; }
-vRes = oneNewList();
-v7 = oneNewChar('s');
-oneAppend(vRes, v7);
-v7 = oneNewChar('u');
-oneAppend(vRes, v7);
-v7 = oneNewChar('b');
-oneAppend(vRes, v7);
-} while (0);
-if (vRes != NIL) { break; }
-oneCurrentNode = vn0;
-do {
-v8 = oneNewList();
-v9 = oneNewChar('o');
-oneAppend(v8, v9);
-v9 = oneNewChar('r');
-oneAppend(v8, v9);
-vRes = oneToken(v8);
-if (vRes == NIL) { break; }
-vRes = oneNewList();
-v11 = oneNewChar('o');
-oneAppend(vRes, v11);
-v11 = oneNewChar('r');
-oneAppend(vRes, v11);
+v5 = oneNewChar('r');
+oneAppend(v4, v5);
+vRes = v4;
 } while (0);
 } while (0);
+return vRes;
 }
 
 struct oneValue *oneMulOp(void)
@@ -263,67 +229,52 @@ struct oneValue *v2;
 struct oneValue *v3;
 struct oneValue *v4;
 struct oneValue *v5;
-struct oneValue *v6;
-struct oneValue *v7;
-struct oneValue *v8;
-struct oneValue *v9;
-struct oneValue *v10;
-struct oneValue *v11;
 struct oneListNode *vn0;
 struct oneValue *vRes;
 vn0 = oneCurrentNode;
 do {
 do {
+vRes = oneToken("*");
+if (vRes == NIL) { break; }
 v0 = oneNewList();
-v1 = oneNewChar('*');
+v1 = oneNewChar('m');
 oneAppend(v0, v1);
-vRes = oneToken(v0);
-if (vRes == NIL) { break; }
-vRes = oneNewList();
-v3 = oneNewChar('m');
-oneAppend(vRes, v3);
-v3 = oneNewChar('u');
-oneAppend(vRes, v3);
-v3 = oneNewChar('l');
-oneAppend(vRes, v3);
+v1 = oneNewChar('u');
+oneAppend(v0, v1);
+v1 = oneNewChar('l');
+oneAppend(v0, v1);
+vRes = v0;
 } while (0);
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
 do {
+vRes = oneToken("/");
+if (vRes == NIL) { break; }
+v2 = oneNewList();
+v3 = oneNewChar('d');
+oneAppend(v2, v3);
+v3 = oneNewChar('i');
+oneAppend(v2, v3);
+v3 = oneNewChar('v');
+oneAppend(v2, v3);
+vRes = v2;
+} while (0);
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
+do {
+vRes = oneToken("and");
+if (vRes == NIL) { break; }
 v4 = oneNewList();
-v5 = oneNewChar('/');
+v5 = oneNewChar('a');
 oneAppend(v4, v5);
-vRes = oneToken(v4);
-if (vRes == NIL) { break; }
-vRes = oneNewList();
-v7 = oneNewChar('d');
-oneAppend(vRes, v7);
-v7 = oneNewChar('i');
-oneAppend(vRes, v7);
-v7 = oneNewChar('v');
-oneAppend(vRes, v7);
-} while (0);
-if (vRes != NIL) { break; }
-oneCurrentNode = vn0;
-do {
-v8 = oneNewList();
-v9 = oneNewChar('a');
-oneAppend(v8, v9);
-v9 = oneNewChar('n');
-oneAppend(v8, v9);
-v9 = oneNewChar('d');
-oneAppend(v8, v9);
-vRes = oneToken(v8);
-if (vRes == NIL) { break; }
-vRes = oneNewList();
-v11 = oneNewChar('a');
-oneAppend(vRes, v11);
-v11 = oneNewChar('n');
-oneAppend(vRes, v11);
-v11 = oneNewChar('d');
-oneAppend(vRes, v11);
+v5 = oneNewChar('n');
+oneAppend(v4, v5);
+v5 = oneNewChar('d');
+oneAppend(v4, v5);
+vRes = v4;
 } while (0);
 } while (0);
+return vRes;
 }
 
 struct oneValue *oneComp(void)
@@ -333,6 +284,7 @@ struct oneValue *v1;
 struct oneValue *v2;
 struct oneValue *v3;
 struct oneValue *v4;
+struct oneValue *v5;
 struct oneValue *x;
 struct oneValue *op;
 struct oneValue *y;
@@ -350,21 +302,23 @@ if (v1 == NIL) { break; }
 y = oneExpr();
 v1 = y;
 if (v1 == NIL) { break; }
-x = oneNewList();
-v4 = op;
-oneAppend(x, v4);
-v4 = x;
-oneAppend(x, v4);
-v4 = y;
-oneAppend(x, v4);
+v4 = oneNewList();
+v5 = op;
+oneAppend(v4, v5);
+v5 = x;
+oneAppend(v4, v5);
+v5 = y;
+oneAppend(v4, v5);
+x = v4;
 v1 = x;
 } while (0);
 if (v1 == NIL) { break; }
 oneAppend(vRes, v1);
-} while (0);
+} while (1);
 if (vRes == NIL) { break; }
 vRes = x;
 } while (0);
+return vRes;
 }
 
 struct oneValue *oneExpr(void)
@@ -375,99 +329,40 @@ struct oneValue *v2;
 struct oneValue *v3;
 struct oneValue *v4;
 struct oneValue *v5;
-struct oneValue *v6;
-struct oneValue *v7;
-struct oneValue *v8;
-struct oneValue *v9;
-struct oneValue *v10;
-struct oneValue *v11;
-struct oneValue *v12;
-struct oneValue *v13;
-struct oneValue *v14;
-struct oneListNode *vn0;
 struct oneValue *x;
 struct oneValue *op;
 struct oneValue *y;
 struct oneValue *vRes;
-vn0 = oneCurrentNode;
 do {
-do {
-v0 = oneNewList();
-v1 = oneNewChar('-');
-oneAppend(v0, v1);
-vRes = oneToken(v0);
-if (vRes == NIL) { break; }
 x = oneTerm();
 vRes = x;
 if (vRes == NIL) { break; }
-x = oneNewList();
+vRes = oneNewList();
+do {
+do {
+op = oneAddOp();
+v1 = op;
+if (v1 == NIL) { break; }
+y = oneTerm();
+v1 = y;
+if (v1 == NIL) { break; }
 v4 = oneNewList();
-v5 = oneNewChar('n');
+v5 = op;
 oneAppend(v4, v5);
-v5 = oneNewChar('e');
+v5 = x;
 oneAppend(v4, v5);
-v5 = oneNewChar('g');
+v5 = y;
 oneAppend(v4, v5);
-oneAppend(x, v4);
-v4 = x;
-oneAppend(x, v4);
-vRes = x;
-if (vRes == NIL) { break; }
-vRes = oneNewList();
-do {
-do {
-op = oneAddOp();
-v6 = op;
-if (v6 == NIL) { break; }
-y = oneTerm();
-v6 = y;
-if (v6 == NIL) { break; }
-x = oneNewList();
-v9 = op;
-oneAppend(x, v9);
-v9 = x;
-oneAppend(x, v9);
-v9 = y;
-oneAppend(x, v9);
-v6 = x;
+x = v4;
+v1 = x;
 } while (0);
-if (v6 == NIL) { break; }
-oneAppend(vRes, v6);
-} while (0);
+if (v1 == NIL) { break; }
+oneAppend(vRes, v1);
+} while (1);
 if (vRes == NIL) { break; }
 vRes = x;
 } while (0);
-if (vRes != NIL) { break; }
-oneCurrentNode = vn0;
-do {
-x = oneTerm();
-vRes = x;
-if (vRes == NIL) { break; }
-vRes = oneNewList();
-do {
-do {
-op = oneAddOp();
-v11 = op;
-if (v11 == NIL) { break; }
-y = oneTerm();
-v11 = y;
-if (v11 == NIL) { break; }
-x = oneNewList();
-v14 = op;
-oneAppend(x, v14);
-v14 = x;
-oneAppend(x, v14);
-v14 = y;
-oneAppend(x, v14);
-v11 = x;
-} while (0);
-if (v11 == NIL) { break; }
-oneAppend(vRes, v11);
-} while (0);
-if (vRes == NIL) { break; }
-vRes = x;
-} while (0);
-} while (0);
+return vRes;
 }
 
 struct oneValue *oneTerm(void)
@@ -477,6 +372,7 @@ struct oneValue *v1;
 struct oneValue *v2;
 struct oneValue *v3;
 struct oneValue *v4;
+struct oneValue *v5;
 struct oneValue *x;
 struct oneValue *op;
 struct oneValue *y;
@@ -494,21 +390,23 @@ if (v1 == NIL) { break; }
 y = oneFactor();
 v1 = y;
 if (v1 == NIL) { break; }
-x = oneNewList();
-v4 = op;
-oneAppend(x, v4);
-v4 = x;
-oneAppend(x, v4);
-v4 = y;
-oneAppend(x, v4);
+v4 = oneNewList();
+v5 = op;
+oneAppend(v4, v5);
+v5 = x;
+oneAppend(v4, v5);
+v5 = y;
+oneAppend(v4, v5);
+x = v4;
 v1 = x;
 } while (0);
 if (v1 == NIL) { break; }
 oneAppend(vRes, v1);
-} while (0);
+} while (1);
 if (vRes == NIL) { break; }
 vRes = x;
 } while (0);
+return vRes;
 }
 
 struct oneValue *oneFactor(void)
@@ -516,36 +414,35 @@ struct oneValue *oneFactor(void)
 struct oneValue *v0;
 struct oneValue *v1;
 struct oneValue *v2;
-struct oneValue *v3;
-struct oneValue *v4;
-struct oneValue *v5;
-struct oneValue *v6;
-struct oneValue *v7;
 struct oneListNode *vn0;
 struct oneValue *x;
 struct oneValue *vRes;
 vn0 = oneCurrentNode;
 do {
+do {
+vRes = oneNewList();
+do {
+v0 = oneMatchString(" ");
+if (v0 == NIL) { break; }
+oneAppend(vRes, v0);
+} while (1);
+if (vRes == NIL) { break; }
 vRes = oneNumber();
+} while (0);
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
 do {
-v1 = oneNewList();
-v2 = oneNewChar('(');
-oneAppend(v1, v2);
-vRes = oneToken(v1);
+vRes = oneToken("(");
 if (vRes == NIL) { break; }
 x = oneComp();
 vRes = x;
 if (vRes == NIL) { break; }
-v5 = oneNewList();
-v6 = oneNewChar(')');
-oneAppend(v5, v6);
-vRes = oneToken(v5);
+vRes = oneToken(")");
 if (vRes == NIL) { break; }
 vRes = x;
 } while (0);
 } while (0);
+return vRes;
 }
 
 struct oneValue *oneListExpr(void)
@@ -1049,5 +946,6 @@ v65 = y;
 vRes = oneGt(v64, v65);
 } while (0);
 } while (0);
+return vRes;
 }
 
