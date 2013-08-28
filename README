@@ -1,3 +1,5 @@
 To run OneTongue calculator example:
 
-    node Runner.js > output/OutputCalculator.c
+    cd output
+    make
+    ./calculator
