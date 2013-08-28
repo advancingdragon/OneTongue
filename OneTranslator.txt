@@ -46,6 +46,10 @@ ometa OneTranslator {
                  -> (x + y +
                      dest + " = one" + op + "(" + v + ", " + w + ");\n")
 
+               | [ 'match' char:x ]
+                 emitChar(x):c
+                 -> (dest + " = oneMatchChar(" + c + ");\n")
+
                | [ 'match' number:x ]
                  -> (dest + " = oneMatchInt(" + x.toString() + ");\n")
 
@@ -61,7 +65,11 @@ ometa OneTranslator {
                      "oneCurrentNode = oneInput->listValueFirst;\n" +
                      x +
                      "oneInput = " + input + ";\n" +
+                     "if (" + dest + " == NIL) {\n" +
                      "oneCurrentNode = " + node + ";\n" +
+                     "} else {\n" +
+                     "oneCurrentNode = " + node + "->next;\n" +
+                     "}\n" +
                      "} else {\n" +
                      dest + " = NIL;\n" +
                      "}\n")

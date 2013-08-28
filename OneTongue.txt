@@ -70,6 +70,7 @@ ometa OneTongue {
 
     expr5 = call:x              -> x
           | name:n              -> ["call", n]
+          | character:x         -> ["match", x]
           | number:x            -> ["match", x]
           | doubleQuote:xs      -> ["matchList", xs]
           | "#" doubleQuote:xs  -> ["token", xs]

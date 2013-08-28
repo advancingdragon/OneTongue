@@ -36,9 +36,13 @@ struct oneValue *oneMatchInt(int i);
 struct oneValue *oneMatchString(char *s);
 struct oneValue *oneToken(char *s);
 
+struct oneValue *oneThing(enum oneTag tag);
 struct oneValue *oneChar(void);
+struct oneValue *oneInt(void);
+
 struct oneValue *oneToInt(struct oneValue *s);
 
+struct oneValue *oneIf(struct oneValue *x);
 struct oneValue *oneNeg(struct oneValue *x);
 
 struct oneValue *oneMul(struct oneValue *x, struct oneValue *y);

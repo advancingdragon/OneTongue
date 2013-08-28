@@ -12,7 +12,10 @@ Break
 
 BLOCK WORDS
 
-IfZero    (does not drop TOS)
-IfNotZero (does not drop TOS)
-Do
-EnterList
+IfZero ... End    (does not drop TOS)
+IfNotZero ... End (does not drop TOS)
+
+Do ... Repeat (while 1)
+Do ... End    (while 0)
+
+EnterList ... End

@@ -17,34 +17,34 @@ struct oneListNode *vn0;
 struct oneValue *vRes;
 vn0 = oneCurrentNode;
 do {
-vRes = oneMatchString("0");
+vRes = oneMatchChar('0');
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
-vRes = oneMatchString("1");
+vRes = oneMatchChar('1');
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
-vRes = oneMatchString("2");
+vRes = oneMatchChar('2');
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
-vRes = oneMatchString("3");
+vRes = oneMatchChar('3');
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
-vRes = oneMatchString("4");
+vRes = oneMatchChar('4');
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
-vRes = oneMatchString("5");
+vRes = oneMatchChar('5');
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
-vRes = oneMatchString("6");
+vRes = oneMatchChar('6');
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
-vRes = oneMatchString("7");
+vRes = oneMatchChar('7');
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
-vRes = oneMatchString("8");
+vRes = oneMatchChar('8');
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
-vRes = oneMatchString("9");
+vRes = oneMatchChar('9');
 } while (0);
 return vRes;
 }
@@ -53,24 +53,35 @@ struct oneValue *oneNumber(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
+struct oneValue *v2;
+struct oneValue *v3;
+struct oneValue *v4;
 struct oneValue *cs;
 struct oneValue *vRes;
 do {
-v0 = oneDigit();
-if (v0 == NIL) {
+vRes = oneNewList();
+do {
+v0 = oneMatchString(" ");
+if (v0 == NIL) { break; }
+oneAppend(vRes, v0);
+} while (1);
+if (vRes == NIL) { break; }
+v1 = oneDigit();
+if (v1 == NIL) {
 cs = NIL;
 } else {
 cs = oneNewList();
-oneAppend(cs, v0);
+oneAppend(cs, v1);
 do {
-v0 = oneDigit();
-if (v0 == NIL) { break; }
-oneAppend(cs, v0);
+v1 = oneDigit();
+if (v1 == NIL) { break; }
+oneAppend(cs, v1);
 } while (1);
 }
 vRes = cs;
 if (vRes == NIL) { break; }
-vRes = cs;
+v3 = cs;
+vRes = oneToInt(v3);
 } while (0);
 return vRes;
 }
@@ -329,10 +340,71 @@ struct oneValue *v2;
 struct oneValue *v3;
 struct oneValue *v4;
 struct oneValue *v5;
+struct oneValue *v6;
+struct oneValue *v7;
+struct oneValue *v8;
+struct oneValue *v9;
+struct oneValue *v10;
+struct oneValue *v11;
+struct oneValue *v12;
+struct oneValue *v13;
+struct oneValue *v14;
+struct oneValue *v15;
+struct oneListNode *vn0;
 struct oneValue *x;
 struct oneValue *op;
 struct oneValue *y;
 struct oneValue *vRes;
+vn0 = oneCurrentNode;
+do {
+do {
+vRes = oneToken("-");
+if (vRes == NIL) { break; }
+x = oneTerm();
+vRes = x;
+if (vRes == NIL) { break; }
+v1 = oneNewList();
+v3 = oneNewList();
+v4 = oneNewChar('n');
+oneAppend(v3, v4);
+v4 = oneNewChar('e');
+oneAppend(v3, v4);
+v4 = oneNewChar('g');
+oneAppend(v3, v4);
+v2 = v3;
+oneAppend(v1, v2);
+v2 = x;
+oneAppend(v1, v2);
+x = v1;
+vRes = x;
+if (vRes == NIL) { break; }
+vRes = oneNewList();
+do {
+do {
+op = oneAddOp();
+v5 = op;
+if (v5 == NIL) { break; }
+y = oneTerm();
+v5 = y;
+if (v5 == NIL) { break; }
+v8 = oneNewList();
+v9 = op;
+oneAppend(v8, v9);
+v9 = x;
+oneAppend(v8, v9);
+v9 = y;
+oneAppend(v8, v9);
+x = v8;
+v5 = x;
+} while (0);
+if (v5 == NIL) { break; }
+oneAppend(vRes, v5);
+} while (1);
+if (vRes == NIL) { break; }
+vRes = x;
+} while (0);
+if (vRes != NIL) { break; }
+oneCurrentNode = vn0;
 do {
 x = oneTerm();
 vRes = x;
@@ -341,26 +413,27 @@ vRes = oneNewList();
 do {
 do {
 op = oneAddOp();
-v1 = op;
-if (v1 == NIL) { break; }
+v11 = op;
+if (v11 == NIL) { break; }
 y = oneTerm();
-v1 = y;
-if (v1 == NIL) { break; }
-v4 = oneNewList();
-v5 = op;
-oneAppend(v4, v5);
-v5 = x;
-oneAppend(v4, v5);
-v5 = y;
-oneAppend(v4, v5);
-x = v4;
-v1 = x;
+v11 = y;
+if (v11 == NIL) { break; }
+v14 = oneNewList();
+v15 = op;
+oneAppend(v14, v15);
+v15 = x;
+oneAppend(v14, v15);
+v15 = y;
+oneAppend(v14, v15);
+x = v14;
+v11 = x;
 } while (0);
-if (v1 == NIL) { break; }
-oneAppend(vRes, v1);
+if (v11 == NIL) { break; }
+oneAppend(vRes, v11);
 } while (1);
 if (vRes == NIL) { break; }
 vRes = x;
+} while (0);
 } while (0);
 return vRes;
 }
@@ -413,22 +486,12 @@ struct oneValue *oneFactor(void)
 {
 struct oneValue *v0;
 struct oneValue *v1;
-struct oneValue *v2;
 struct oneListNode *vn0;
 struct oneValue *x;
 struct oneValue *vRes;
 vn0 = oneCurrentNode;
 do {
-do {
-vRes = oneNewList();
-do {
-v0 = oneMatchString(" ");
-if (v0 == NIL) { break; }
-oneAppend(vRes, v0);
-} while (1);
-if (vRes == NIL) { break; }
 vRes = oneNumber();
-} while (0);
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
 do {
@@ -541,7 +604,7 @@ struct oneValue *y;
 struct oneValue *vRes;
 vn0 = oneCurrentNode;
 do {
-vRes = oneNumber();
+vRes = oneInt();
 if (vRes != NIL) { break; }
 oneCurrentNode = vn0;
 do {
@@ -558,7 +621,11 @@ oneInput = oneCurrentNode->value;
 oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("neg");
 oneInput = v2;
+if (vRes == NIL) {
 oneCurrentNode = vn2;
+} else {
+oneCurrentNode = vn2->next;
+}
 } else {
 vRes = NIL;
 }
@@ -567,7 +634,11 @@ x = oneListExpr();
 vRes = x;
 } while (0);
 oneInput = v1;
+if (vRes == NIL) {
 oneCurrentNode = vn1;
+} else {
+oneCurrentNode = vn1->next;
+}
 } else {
 vRes = NIL;
 }
@@ -591,7 +662,11 @@ oneInput = oneCurrentNode->value;
 oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("mul");
 oneInput = v7;
+if (vRes == NIL) {
 oneCurrentNode = vn4;
+} else {
+oneCurrentNode = vn4->next;
+}
 } else {
 vRes = NIL;
 }
@@ -603,7 +678,11 @@ y = oneListExpr();
 vRes = y;
 } while (0);
 oneInput = v6;
+if (vRes == NIL) {
 oneCurrentNode = vn3;
+} else {
+oneCurrentNode = vn3->next;
+}
 } else {
 vRes = NIL;
 }
@@ -628,7 +707,11 @@ oneInput = oneCurrentNode->value;
 oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("div");
 oneInput = v13;
+if (vRes == NIL) {
 oneCurrentNode = vn6;
+} else {
+oneCurrentNode = vn6->next;
+}
 } else {
 vRes = NIL;
 }
@@ -640,7 +723,11 @@ y = oneListExpr();
 vRes = y;
 } while (0);
 oneInput = v12;
+if (vRes == NIL) {
 oneCurrentNode = vn5;
+} else {
+oneCurrentNode = vn5->next;
+}
 } else {
 vRes = NIL;
 }
@@ -665,7 +752,11 @@ oneInput = oneCurrentNode->value;
 oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("add");
 oneInput = v19;
+if (vRes == NIL) {
 oneCurrentNode = vn8;
+} else {
+oneCurrentNode = vn8->next;
+}
 } else {
 vRes = NIL;
 }
@@ -677,7 +768,11 @@ y = oneListExpr();
 vRes = y;
 } while (0);
 oneInput = v18;
+if (vRes == NIL) {
 oneCurrentNode = vn7;
+} else {
+oneCurrentNode = vn7->next;
+}
 } else {
 vRes = NIL;
 }
@@ -702,7 +797,11 @@ oneInput = oneCurrentNode->value;
 oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("sub");
 oneInput = v25;
+if (vRes == NIL) {
 oneCurrentNode = vn10;
+} else {
+oneCurrentNode = vn10->next;
+}
 } else {
 vRes = NIL;
 }
@@ -714,7 +813,11 @@ y = oneListExpr();
 vRes = y;
 } while (0);
 oneInput = v24;
+if (vRes == NIL) {
 oneCurrentNode = vn9;
+} else {
+oneCurrentNode = vn9->next;
+}
 } else {
 vRes = NIL;
 }
@@ -739,7 +842,11 @@ oneInput = oneCurrentNode->value;
 oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("eq");
 oneInput = v31;
+if (vRes == NIL) {
 oneCurrentNode = vn12;
+} else {
+oneCurrentNode = vn12->next;
+}
 } else {
 vRes = NIL;
 }
@@ -751,7 +858,11 @@ y = oneListExpr();
 vRes = y;
 } while (0);
 oneInput = v30;
+if (vRes == NIL) {
 oneCurrentNode = vn11;
+} else {
+oneCurrentNode = vn11->next;
+}
 } else {
 vRes = NIL;
 }
@@ -776,7 +887,11 @@ oneInput = oneCurrentNode->value;
 oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("ne");
 oneInput = v37;
+if (vRes == NIL) {
 oneCurrentNode = vn14;
+} else {
+oneCurrentNode = vn14->next;
+}
 } else {
 vRes = NIL;
 }
@@ -788,7 +903,11 @@ y = oneListExpr();
 vRes = y;
 } while (0);
 oneInput = v36;
+if (vRes == NIL) {
 oneCurrentNode = vn13;
+} else {
+oneCurrentNode = vn13->next;
+}
 } else {
 vRes = NIL;
 }
@@ -813,7 +932,11 @@ oneInput = oneCurrentNode->value;
 oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("le");
 oneInput = v43;
+if (vRes == NIL) {
 oneCurrentNode = vn16;
+} else {
+oneCurrentNode = vn16->next;
+}
 } else {
 vRes = NIL;
 }
@@ -825,7 +948,11 @@ y = oneListExpr();
 vRes = y;
 } while (0);
 oneInput = v42;
+if (vRes == NIL) {
 oneCurrentNode = vn15;
+} else {
+oneCurrentNode = vn15->next;
+}
 } else {
 vRes = NIL;
 }
@@ -850,7 +977,11 @@ oneInput = oneCurrentNode->value;
 oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("ge");
 oneInput = v49;
+if (vRes == NIL) {
 oneCurrentNode = vn18;
+} else {
+oneCurrentNode = vn18->next;
+}
 } else {
 vRes = NIL;
 }
@@ -862,7 +993,11 @@ y = oneListExpr();
 vRes = y;
 } while (0);
 oneInput = v48;
+if (vRes == NIL) {
 oneCurrentNode = vn17;
+} else {
+oneCurrentNode = vn17->next;
+}
 } else {
 vRes = NIL;
 }
@@ -887,7 +1022,11 @@ oneInput = oneCurrentNode->value;
 oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("lt");
 oneInput = v55;
+if (vRes == NIL) {
 oneCurrentNode = vn20;
+} else {
+oneCurrentNode = vn20->next;
+}
 } else {
 vRes = NIL;
 }
@@ -899,7 +1038,11 @@ y = oneListExpr();
 vRes = y;
 } while (0);
 oneInput = v54;
+if (vRes == NIL) {
 oneCurrentNode = vn19;
+} else {
+oneCurrentNode = vn19->next;
+}
 } else {
 vRes = NIL;
 }
@@ -924,7 +1067,11 @@ oneInput = oneCurrentNode->value;
 oneCurrentNode = oneInput->listValueFirst;
 vRes = oneMatchString("gt");
 oneInput = v61;
+if (vRes == NIL) {
 oneCurrentNode = vn22;
+} else {
+oneCurrentNode = vn22->next;
+}
 } else {
 vRes = NIL;
 }
@@ -936,7 +1083,11 @@ y = oneListExpr();
 vRes = y;
 } while (0);
 oneInput = v60;
+if (vRes == NIL) {
 oneCurrentNode = vn21;
+} else {
+oneCurrentNode = vn21->next;
+}
 } else {
 vRes = NIL;
 }

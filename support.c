@@ -88,6 +88,9 @@ struct oneValue *oneMatchChar(char c)
     struct oneValue *result;
 
     result = oneChar();
+    if (result == NIL) {
+        return NIL;
+    }
     if (result->charValue != c) {
         return NIL;
     }
@@ -100,21 +103,14 @@ struct oneValue *oneMatchInt(int i)
 {
     struct oneValue *result;
 
-    if (oneCurrentNode == NIL) {
+    result = oneInt();
+    if (result == NIL) {
         return NIL;
     }
-    if (oneCurrentNode->value == NIL) {
-        return NIL;
-    }
-    if (oneCurrentNode->value->tag != TAG_INT) {
-        return NIL;
-    }
-    if (oneCurrentNode->value->intValue != i) {
+    if (result->intValue != i) {
         return NIL;
     }
 
-    result = oneCurrentNode->value;
-    oneCurrentNode = oneCurrentNode->next;
     return result;
 }
 
@@ -147,6 +143,9 @@ struct oneValue *oneMatchString(char *s)
     return result;
 }
 
+// TODO add greater flexibility by having oneToken call
+// a oneSpaces routine that the user must implement
+
 struct oneValue *oneToken(char *s)
 {
     while (oneMatchString(" ") != NIL) {
@@ -157,6 +156,18 @@ struct oneValue *oneToken(char *s)
 
 struct oneValue *oneChar(void)
 {
+    return oneThing(TAG_CHAR);
+}
+
+struct oneValue *oneInt(void)
+{
+    return oneThing(TAG_INT);
+}
+
+// returns one of tag
+
+struct oneValue *oneThing(enum oneTag tag)
+{
     struct oneValue *result;
 
     if (oneCurrentNode == NIL) {
@@ -165,7 +176,7 @@ struct oneValue *oneChar(void)
     if (oneCurrentNode->value == NIL) {
         return NIL;
     }
-    if (oneCurrentNode->value->tag != TAG_CHAR) {
+    if (oneCurrentNode->value->tag != tag) {
         return NIL;
     }
 
@@ -174,11 +185,11 @@ struct oneValue *oneChar(void)
     return result;
 }
 
-// incomplete, only parses first digit, assumes ASCII
-
 struct oneValue *oneToInt(struct oneValue *s)
 {
+    struct oneListNode *node;
     char c;
+    int result;
 
     if (s == NIL) {
         return NIL;
@@ -186,52 +197,107 @@ struct oneValue *oneToInt(struct oneValue *s)
     if (s->tag != TAG_LIST) {
         return NIL;
     }
-    if (s->listValueFirst == NIL) {
-        return NIL;
-    }
-    if (s->listValueFirst->value == NIL) {
-        return NIL;
-    }
-    if (s->listValueFirst->value->tag != TAG_CHAR) {
-        return NIL;
-    }
-    c = s->listValueFirst->value->charValue;
-    if (c < '0' || c > '9') {
-        return NIL;
+
+    result = 0;
+
+    for (node = s->listValueFirst; node != NIL; node = node->next) {
+        if (node->value == NIL) {
+            return NIL;
+        }
+        if (node->value->tag != TAG_CHAR) {
+            return NIL;
+        }
+        c = node->value->charValue;
+        if (c < '0' || c > '9') {
+            return NIL;
+        }
+        result = result*10 + (c - '0');
     }
 
-    return oneNewInt(c - '0');
+    return oneNewInt(result);
+}
+
+// oneIf fails if x is zero, otherwise returns x
+
+struct oneValue *oneIf(struct oneValue *x)
+{
+    if (x == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT) {
+        return NIL;
+    }
+    if (x->intValue == 0) {
+        return NIL;
+    } else {
+        return x;
+    }
 }
 
 struct oneValue *oneNeg(struct oneValue *x)
 {
-    return NIL;
+    if (x == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(-(x->intValue));
 }
-
 
 struct oneValue *oneMul(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue * y->intValue);
 }
 
 struct oneValue *oneDiv(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue / y->intValue);
 }
 
 struct oneValue *oneMod(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue % y->intValue);
 }
 
 struct oneValue *oneAdd(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue + y->intValue);
 }
 
 struct oneValue *oneSub(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue - y->intValue);
 }
 
 struct oneValue *oneConcat(struct oneValue *x, struct oneValue *y)
@@ -241,42 +307,90 @@ struct oneValue *oneConcat(struct oneValue *x, struct oneValue *y)
 
 struct oneValue *oneEq(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue == y->intValue);
 }
 
 struct oneValue *oneNe(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue != y->intValue);
 }
 
 struct oneValue *oneLt(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue < y->intValue);
 }
 
 struct oneValue *oneGt(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue > y->intValue);
 }
 
 struct oneValue *oneLe(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue <= y->intValue);
 }
 
 struct oneValue *oneGe(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue >= y->intValue);
 }
 
 struct oneValue *oneAnd(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue & y->intValue);
 }
 
 struct oneValue *oneOr(struct oneValue *x, struct oneValue *y)
 {
-    return NIL;
+    if (x == NIL || y == NIL) {
+        return NIL;
+    }
+    if (x->tag != TAG_INT || y->tag != TAG_INT) {
+        return NIL;
+    }
+    return oneNewInt(x->intValue | y->intValue);
 }
 
 // stuff to support calculator example
@@ -296,48 +410,21 @@ int main(int argc, char **argv)
         oneAppend(string, oneNewChar(c));
     }
 
+    // set stdin input as OneTongue input
     oneInput = string;
-    oneCurrentNode = string->listValueFirst;
+    oneCurrentNode = oneInput->listValueFirst;
 
     tree = oneComp();
 
     onePrint(tree);
+    printf("\n\n");
 
-    /*
-    // just a bunch of test cases
+    // set resulting tree as OneTongue input
+    // this is sort of like the difference between matchAll and match
+    oneInput = oneNewList();
+    oneAppend(oneInput, tree);
+    oneCurrentNode = oneInput->listValueFirst;
 
-    struct oneValue *testChar;
-    struct oneValue *testChar2;
-    struct oneValue *testInt;
-    struct oneValue *testList;
-    struct oneValue *testList2;
-
-    testChar = oneNewChar('w');
-    onePrint(testChar);
+    onePrint(oneListExpr());
     printf("\n");
-
-    testChar2 = oneNewChar('*');
-    onePrint(testChar2);
-    printf("\n");
-
-    testInt = oneNewInt(42);
-    onePrint(testInt);
-    printf("\n");
-
-    testList = oneNewList();
-    oneAppend(testList, testChar);
-    oneAppend(testList, testInt);
-    oneAppend(testList, testChar);
-    onePrint(testList);
-    printf("\n");
-
-    testList2 = oneNewList();
-    oneAppend(testList2, testInt);
-    oneAppend(testList2, testList);
-    oneAppend(testList2, testChar2);
-    oneAppend(testList2, testChar);
-    onePrint(testList2);
-    printf("\n");
-    return 0;
-    */
 }
