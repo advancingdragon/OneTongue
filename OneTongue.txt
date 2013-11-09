@@ -20,7 +20,9 @@ ometa OneTongue {
     // treated as if they were OneTongue strings (lists of characters)
 
     name = spaces letter:c letterOrDigit*:cs
-           -> (c + cs.join("")),
+           ( -> (c + cs.join("")) ):n
+           ?(this.isNotKeyword(n))
+           -> n,
 
     character = spaces '$' char:c ?(c.charCodeAt(0) > 32)
                 -> c,
@@ -34,8 +36,8 @@ ometa OneTongue {
     singleQuote = spaces '\'' (~'\'' char)*:cs '\''
                   -> (cs.join("")),
 
-    oper :p = ?(p === 0) ( "||" -> "Or" )
-            | ?(p === 1) ( "&&" -> "And" )
+    oper :p = ?(p === 0) ( "or" -> "Or" )
+            | ?(p === 1) ( "and" -> "And" )
             | ?(p === 2) ( "==" -> "Eq"
                          | "<>" -> "Ne"
                          | "<=" -> "Le"
@@ -43,11 +45,11 @@ ometa OneTongue {
                          | "<"  -> "Lt"
                          | ">"  -> "Gt" )
             | ?(p === 3) ( "."  -> "Concat" )
-            | ?(p === 4) ( "+"  -> "Add"
-                         | "-"  -> "Sub" )
-            | ?(p === 5) ( "*"  -> "Mul"
-                         | "/"  -> "Div"
-                         | "%"  -> "Mod" ),
+            | ?(p === 4) ( "add"  -> "Add"
+                         | "sub"  -> "Sub" )
+            | ?(p === 5) ( "mul"  -> "Mul"
+                         | "div"  -> "Div"
+                         | "mod"  -> "Mod" ),
 
     call = name:n "[" action(0)*:xs "]" -> (["call", n].concat(xs)),
 
@@ -100,3 +102,8 @@ ometa OneTongue {
 
     program = statement*
 }
+
+OneTongue.isNotKeyword = function(name) {
+    return ["and", "or",
+            "add", "sub", "mul", "div", "mod"].indexOf(name) === -1;
+};

@@ -29,10 +29,10 @@ Factor = Number
 
 ListExpr = Int
          | { 'neg' ListExpr:x }            !Neg[x]
-         | { 'mul' ListExpr:x ListExpr:y } !x * y
-         | { 'div' ListExpr:x ListExpr:y } !x / y
-         | { 'add' ListExpr:x ListExpr:y } !x + y
-         | { 'sub' ListExpr:x ListExpr:y } !x - y
+         | { 'mul' ListExpr:x ListExpr:y } !x mul y
+         | { 'div' ListExpr:x ListExpr:y } !x div y
+         | { 'add' ListExpr:x ListExpr:y } !x add y
+         | { 'sub' ListExpr:x ListExpr:y } !x sub y
          | { 'eq'  ListExpr:x ListExpr:y } !x == y
          | { 'ne'  ListExpr:x ListExpr:y } !x <> y
          | { 'le'  ListExpr:x ListExpr:y } !x <= y
