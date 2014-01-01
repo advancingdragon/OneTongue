@@ -1,44 +1,44 @@
 Expr = KeywordExpr;
 
-KeywordExpr = BinaryExpr:x KeywordsAndArgs:selArgs !{"send" x}.selArgs
+KeywordExpr = BinaryExpr:x KeywordsAndArgs:selArgs {["send" x] . selArgs}
             | BinaryExpr;
 
-KeywordsAndArgs = !"":sel
-                  !{}:args
-                  ( #"Keyword":kw !sel.kw:sel
-                    BinaryExpr:x  !args.x:args )+ !{sel}.args;
+KeywordsAndArgs = {""}:sel
+                  {[]}:args
+                  ( ^"Keyword":kw {sel . kw}:sel
+                    BinaryExpr:x  {args . x}:args )+ {[sel] . args};
 
 BinaryExpr = UnaryExpr:x
-             ( #"BinarySel":sel UnaryExpr:x !{"send" x sel y}:x )* !x;
+             ( ^"BinarySel":sel UnaryExpr:y {["send" x sel y]}:x )* {x};
 
 UnaryExpr = Primary:x
-            ( #"UnarySel":sel !{"send" x sel}:x )* !x;
+            ( ^"UnarySel":sel {["send" x sel]}:x )* {x};
 
-Primary = #"Name"
-        | #"Number"
-        | #"(" Expr:x #")" !x;
+Primary = ^"Name"
+        | ^"Number"
+        | ^"(" Expr:x ^")" {x};
 
-Token t = !t == "Name"      Spaces Name
-        | !t == "Number"    Spaces Number
-        | !t == "Keyword"   Spaces Keyword
-        | !t == "BinarySel" Spaces BinarySel
-        | !t == "UnarySel"  Spaces UnarySel
-        | !t == "("         Spaces "("
-        | !t == ")"         Spaces ")";
+Token t = {t == "Name"}      Spaces Name
+        | {t == "Number"}    Spaces Number
+        | {t == "Keyword"}   Spaces Keyword
+        | {t == "BinarySel"} Spaces BinarySel
+        | {t == "UnarySel"}  Spaces UnarySel
+        | {t == "("}         Spaces "("
+        | {t == ")"}         Spaces ")";
 
-Name = Letter:x (Letter | Digit)*:xs !{x}.xs;
+Name = Letter:x (Letter | Digit)*:xs {[x] . xs};
 
-Number = Digit+:cs !ToInt[cs];
+Number = Digit+:cs {ToInt(cs)};
 
-Keyword = Name:n ":" !n.":";
+Keyword = Name:n ":" {n . ":"};
 
-BinarySel = Special:c1 Special:c2 !c1.c2
-          | Special:c1            !c1
-          | "-" Special:c2        !"-".c2
+BinarySel = Special:c1 Special:c2 {c1 . c2}
+          | Special:c1            {c1}
+          | "-" Special:c2        {"-" . c2}
           | "|";
 
-unarySel = name:n ~":" !n;
+UnarySel = Name:n ~":" {n};
 
-digit = char:x !x >= $0 && x <= $9 !x;
+Digit = Char:x {x >= $0 & x <= $9} {x};
 
-letter = char:x !x >= $A && x <= $Z || x >= $a && x <= $z !x;
+Letter = Char:x {x >= $A & x <= $Z | x >= $a & x <= $z} {x};

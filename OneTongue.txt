@@ -20,9 +20,7 @@ ometa OneTongue {
     // treated as if they were OneTongue strings (lists of characters)
 
     name = spaces letter:c letterOrDigit*:cs
-           ( -> (c + cs.join("")) ):n
-           ?(this.isNotKeyword(n))
-           -> n,
+           -> (c + cs.join("")),
 
     character = spaces '$' char:c ?(c.charCodeAt(0) > 32)
                 -> c,
@@ -36,8 +34,8 @@ ometa OneTongue {
     singleQuote = spaces '\'' (~'\'' char)*:cs '\''
                   -> (cs.join("")),
 
-    oper :p = ?(p === 0) ( "or" -> "Or" )
-            | ?(p === 1) ( "and" -> "And" )
+    oper :p = ?(p === 0) ( "|" -> "Or" )
+            | ?(p === 1) ( "&" -> "And" )
             | ?(p === 2) ( "==" -> "Eq"
                          | "<>" -> "Ne"
                          | "<=" -> "Le"
@@ -45,20 +43,21 @@ ometa OneTongue {
                          | "<"  -> "Lt"
                          | ">"  -> "Gt" )
             | ?(p === 3) ( "."  -> "Concat" )
-            | ?(p === 4) ( "add"  -> "Add"
-                         | "sub"  -> "Sub" )
-            | ?(p === 5) ( "mul"  -> "Mul"
-                         | "div"  -> "Div"
-                         | "mod"  -> "Mod" ),
+            | ?(p === 4) ( "+"  -> "Add"
+                         | "-"  -> "Sub" )
+            | ?(p === 5) ( "*"  -> "Mul"
+                         | "/"  -> "Div"
+                         | "%"  -> "Mod" ),
 
-    call = name:n "[" action(0)*:xs "]" -> (["call", n].concat(xs)),
+    // no space between the name and the left parenthesis
+    call = name:n seq("(") action(0)*:xs ")" -> (["call", n].concat(xs)),
 
     primitive = call:x                -> x
               | name:n                -> ["var", n]
               | character:x           -> x
               | number:x              -> x
               | doubleQuote:xs        -> ["list", xs]
-              | "{" action(0)*:xs "}" -> ["list", xs]
+              | "[" action(0)*:xs "]" -> ["list", xs]
               | "(" action(0):x ")"   -> x,
 
     action :p = ?(p === 6) primitive
@@ -75,11 +74,11 @@ ometa OneTongue {
           | character:x         -> ["match", x]
           | number:x            -> ["match", x]
           | doubleQuote:xs      -> ["matchList", xs]
-          | "#" doubleQuote:xs  -> ["token", xs]
-          | "{" expr:x "}"      -> ["enterList", x]
+          | "^" doubleQuote:xs  -> ["token", xs]
+          | "[" expr:x "]"      -> ["enterList", x]
           | singleQuote:xs      -> ["enterList", ["matchList", xs]]
           | "~" expr5:x         -> ["not", x]
-          | "!" action(0):x     -> x
+          | "->" primitive:x    -> x
           | "(" expr:x ")"      -> x,
 
     expr4 = expr5:x kleene:k -> [k, x]
@@ -102,8 +101,3 @@ ometa OneTongue {
 
     program = statement*
 }
-
-OneTongue.isNotKeyword = function(name) {
-    return ["and", "or",
-            "add", "sub", "mul", "div", "mod"].indexOf(name) === -1;
-};

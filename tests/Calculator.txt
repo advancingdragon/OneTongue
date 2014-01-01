@@ -1,41 +1,41 @@
 Digit = $0 | $1 | $2 | $3 | $4 | $5 | $6 | $7 | $8 | $9;
 
-Number = " "* Digit+:cs !ToInt[cs];
+Number = " "* Digit+:cs ->ToInt(cs);
 
-RelOp = #"==" !"eq"
-      | #"<>" !"ne"
-      | #"<=" !"le"
-      | #">=" !"ge"
-      | #"<"  !"lt"
-      | #">"  !"gt";
+RelOp = ^"==" ->"eq"
+      | ^"<>" ->"ne"
+      | ^"<=" ->"le"
+      | ^">=" ->"ge"
+      | ^"<"  ->"lt"
+      | ^">"  ->"gt";
 
-AddOp = #"+"  !"add"
-      | #"-"  !"sub"
-      | #"or" !"or";
+AddOp = ^"+"  ->"add"
+      | ^"-"  ->"sub"
+      | ^"or" ->"or";
 
-MulOp = #"*"   !"mul"
-      | #"/"   !"div"
-      | #"and" !"and";
+MulOp = ^"*"   ->"mul"
+      | ^"/"   ->"div"
+      | ^"and" ->"and";
 
-Comp = Expr:x ( RelOp:op Expr:y !{op x y}:x )* !x;
+Comp = Expr:x ( RelOp:op Expr:y ->[op x y]:x )* ->x;
 
-Expr = #"-" Term:x !{"neg" x}:x ( AddOp:op Term:y !{op x y}:x )* !x
-     |      Term:x              ( AddOp:op Term:y !{op x y}:x )* !x;
+Expr = ^"-" Term:x ->["neg" x]:x ( AddOp:op Term:y ->[op x y]:x )* ->x
+     |      Term:x               ( AddOp:op Term:y ->[op x y]:x )* ->x;
 
-Term = Factor:x ( MulOp:op Factor:y !{op x y}:x )* !x;
+Term = Factor:x ( MulOp:op Factor:y ->[op x y]:x )* ->x;
 
 Factor = Number
-       | #"(" Comp:x #")" !x;
+       | ^"(" Comp:x ^")" ->x;
 
 ListExpr = Int
-         | { 'neg' ListExpr:x }            !Neg[x]
-         | { 'mul' ListExpr:x ListExpr:y } !x mul y
-         | { 'div' ListExpr:x ListExpr:y } !x div y
-         | { 'add' ListExpr:x ListExpr:y } !x add y
-         | { 'sub' ListExpr:x ListExpr:y } !x sub y
-         | { 'eq'  ListExpr:x ListExpr:y } !x == y
-         | { 'ne'  ListExpr:x ListExpr:y } !x <> y
-         | { 'le'  ListExpr:x ListExpr:y } !x <= y
-         | { 'ge'  ListExpr:x ListExpr:y } !x >= y
-         | { 'lt'  ListExpr:x ListExpr:y } !x < y
-         | { 'gt'  ListExpr:x ListExpr:y } !x > y;
+         | [ 'neg' ListExpr:x ]            ->Neg(x)
+         | [ 'mul' ListExpr:x ListExpr:y ] ->(x * y)
+         | [ 'div' ListExpr:x ListExpr:y ] ->(x / y)
+         | [ 'add' ListExpr:x ListExpr:y ] ->(x + y)
+         | [ 'sub' ListExpr:x ListExpr:y ] ->(x - y)
+         | [ 'eq'  ListExpr:x ListExpr:y ] ->(x == y)
+         | [ 'ne'  ListExpr:x ListExpr:y ] ->(x <> y)
+         | [ 'le'  ListExpr:x ListExpr:y ] ->(x <= y)
+         | [ 'ge'  ListExpr:x ListExpr:y ] ->(x >= y)
+         | [ 'lt'  ListExpr:x ListExpr:y ] ->(x < y)
+         | [ 'gt'  ListExpr:x ListExpr:y ] ->(x > y);
