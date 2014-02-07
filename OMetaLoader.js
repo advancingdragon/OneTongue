@@ -1,7 +1,7 @@
 // this is the TinLizzie version of unescape, which
 // is incompatible with the standard unescape
 
-unescape = function(s) {
+var unescape = function(s) {
     if (s.charAt(0) === "\\") {
         switch (s.charAt(1)) {
         case '"':
@@ -36,9 +36,9 @@ unescape = function(s) {
 
 // fs is already loaded by anyone importing OMetaLoader.js
 
-// fs = require('fs');
+// var fs = require('fs');
 
-load = function(file) {
+var load = function(file) {
     eval(fs.readFileSync(__dirname + "/ometa/" + file, 'utf8'));
 };
 
@@ -50,22 +50,22 @@ load("bs-ometa-compiler.js");
 load("bs-ometa-optimizer.js");
 load("bs-ometa-js-compiler.js");
 
-translateCode = function(s) {
+var translateCode = function(s) {
     var translationError = function(m, i) {
         console.log("Translation error - please tell Alex about this!");
         throw fail;
-    },
-    tree = BSOMetaJSParser.matchAll(s, "topLevel", undefined,
+    };
+    var tree = BSOMetaJSParser.matchAll(s, "topLevel", undefined,
     function(m, i) {
         throw objectThatDelegatesTo(fail, {errorPos: i});
     });
     return BSOMetaJSTranslator.match(tree, "trans", undefined, translationError);
 };
 
-ometa = function(s) {
+var ometa = function(s) {
     return eval(translateCode(s));
 };
 
-loadOMeta = function(s) {
+var loadOMeta = function(s) {
     return eval(translateCode(fs.readFileSync(__dirname + "/" + s, 'utf8')));
 };

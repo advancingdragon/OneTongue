@@ -1,8 +1,8 @@
 // these two lines are required by every file that uses OMeta
-fs = require('fs');
+var fs = require('fs');
 eval(fs.readFileSync(__dirname + "/OMetaLoader.js", 'utf8'));
 
-util = require('util');
+var util = require('util');
 
 loadOMeta("OneTongue.txt");
 loadOMeta("OneTranslator.txt");
